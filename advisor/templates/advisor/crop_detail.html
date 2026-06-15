@@ -1,0 +1,367 @@
+{% extends "advisor/base.html" %}
+{% load i18n advisor_extras %}
+{% block title %}{{ crop.name }} — FarmWise{% endblock %}
+
+{% block extra_css %}
+<style>
+  .detail-hero {
+    background: linear-gradient(135deg, var(--forest-dark) 0%, var(--forest) 40%, var(--emerald) 100%);
+    color: var(--white);
+    padding: 48px 0;
+    margin: -32px -24px 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .detail-hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 80%;
+    height: 200%;
+    background: radial-gradient(ellipse, rgba(82,183,136,0.15), transparent 60%);
+    pointer-events: none;
+  }
+
+  .detail-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -10%;
+    width: 60%;
+    height: 120%;
+    background: radial-gradient(ellipse, rgba(149,213,178,0.08), transparent 50%);
+    pointer-events: none;
+  }
+
+  .crop-emoji-lg {
+    font-size: 4rem;
+    line-height: 1;
+    filter: saturate(1.1);
+  }
+
+  .info-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: var(--radius-full);
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.9);
+  }
+
+  .guidance-card {
+    border-left: 4px solid;
+    border-radius: var(--radius-md);
+    padding: 20px 24px;
+    background: var(--white);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .guidance-card.plant { border-left-color: var(--sage); }
+  .guidance-card.harvest { border-left-color: var(--amber); }
+  .guidance-card.weather { border-left-color: var(--blue); }
+
+  .timeline-bar {
+    height: 8px;
+    background: var(--gray-100);
+    border-radius: var(--radius-full);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .timeline-fill {
+    height: 100%;
+    border-radius: var(--radius-full);
+    position: absolute;
+    top: 0;
+  }
+
+  .timeline-fill.plant {
+    background: linear-gradient(90deg, var(--sage), var(--sage-light));
+  }
+
+  .timeline-fill.harvest {
+    background: linear-gradient(90deg, var(--amber), #FCD34D);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="detail-hero">
+  <div style="max-width:1280px; margin:0 auto; padding:0 24px; position:relative; z-index:1;">
+    <div style="display:flex; align-items:center; gap:32px; flex-wrap:wrap;">
+      {% if crop.image %}
+        <img src="{{ crop.image.url }}" alt="{{ crop.name }}"
+             style="width:120px; height:120px; object-fit:cover; border-radius:var(--radius-lg); border:3px solid rgba(255,255,255,0.25); box-shadow:0 8px 32px rgba(0,0,0,0.2); flex-shrink:0;">
+      {% else %}
+        <div class="crop-emoji-lg">
+          {% if crop.category == "Cereal" %}🌾
+          {% elif crop.category == "Vegetable" %}🥬
+          {% elif crop.category == "Legume" %}🫘
+          {% elif crop.category == "Root / tuber" %}🥕
+          {% elif crop.category == "Oilseed" %}🌻
+          {% elif crop.category == "Cash crop" %}☕
+          {% else %}🌱{% endif %}
+        </div>
+      {% endif %}
+      <div style="flex:1; min-width:240px;">
+        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
+          <h1 style="font-family:var(--font-display); font-size:2.5rem; font-weight:800; line-height:1.1;">{% trans crop.name %}</h1>
+          {% if is_tracked %}
+            <span class="badge badge-success" style="background:rgba(255,255,255,0.15); color:var(--white); border:1px solid rgba(255,255,255,0.25); font-size:0.78rem;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              {% trans "On Your List" %}
+            </span>
+          {% endif %}
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px;">
+          <span class="info-chip">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            {{ crop.growing_zone.name }}
+          </span>
+          <span class="info-chip">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 0 0-7.5 16.5L12 22l7.5-3.5A10 10 0 0 0 12 2z"/><path d="M12 6v6l4 2"/></svg>
+            {% trans crop.category %}
+          </span>
+          {% if weather_warning %}
+          <span class="info-chip" style="background:rgba(245,158,11,0.2); border-color:rgba(245,158,11,0.3);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            {{ weather_warning }}
+          </span>
+          {% endif %}
+        </div>
+        <div style="display:flex; align-items:center; gap:8px; opacity:0.8;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          <span style="font-size:0.92rem;">{% trans "Current temperature:" %} <strong>{{ current_temp }}</strong></span>
+        </div>
+      </div>
+      <!-- Track/Untrack Button -->
+      <div style="flex-shrink:0;">
+        {% if is_tracked %}
+          <form method="post" action="{% url 'advisor:crop_untrack' crop.slug %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-lg">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              {% trans "Remove from My List" %}
+            </button>
+          </form>
+        {% else %}
+          <form method="post" action="{% url 'advisor:crop_track' crop.slug %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-lg" style="background:var(--white); color:var(--forest); box-shadow:0 4px 20px rgba(0,0,0,0.15);">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              {% trans "Add to My List" %}
+            </button>
+          </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Content Grid -->
+<div style="display:grid; grid-template-columns:1fr 380px; gap:28px; margin-top:28px;" class="animate-in animate-delay-1">
+
+  <!-- Left Column: About & Guidance -->
+  <div style="display:flex; flex-direction:column; gap:24px;">
+
+    <!-- About This Crop -->
+    <div class="card" style="padding:28px;">
+      <h2 style="font-size:1.2rem; font-weight:700; color:var(--gray-800); margin-bottom:16px; display:flex; align-items:center; gap:10px;">
+        <div style="width:36px; height:36px; background:var(--pale); border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--forest)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        </div>
+        {% trans "About This Crop" %}
+      </h2>
+      <p style="color:var(--gray-600); font-size:0.95rem; line-height:1.7; margin-bottom:20px;">
+        {% if crop.description %}{{ crop.description }}{% else %}{% trans "Detailed information about this crop is coming soon. Check back later for updated growing guides and tips." %}{% endif %}
+      </p>
+
+      <!-- Planting & Harvest Timeline -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+        <!-- Planting Window -->
+        <div style="background:var(--gray-50); border-radius:var(--radius-md); padding:18px;">
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2"><path d="M12 2a10 10 0 0 0-7.5 16.5L12 22l7.5-3.5A10 10 0 0 0 12 2z"/><path d="M12 6v6l4 2"/></svg>
+            <span style="font-size:0.85rem; font-weight:600; color:var(--gray-700);">{% trans "Planting Window" %}</span>
+          </div>
+          <div style="font-size:1.3rem; font-weight:800; color:var(--forest); margin-bottom:8px;">
+            {{ crop.plant_start_month|month_name }} — {{ crop.plant_end_month|month_name }}
+          </div>
+          <div class="timeline-bar">
+            <div class="timeline-fill plant" style="left:15%; width:40%;"></div>
+          </div>
+        </div>
+        <!-- Harvest Window -->
+        <div style="background:var(--gray-50); border-radius:var(--radius-md); padding:18px;">
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <span style="font-size:0.85rem; font-weight:600; color:var(--gray-700);">{% trans "Harvest Window" %}</span>
+          </div>
+          <div style="font-size:1.3rem; font-weight:800; color:#92400E; margin-bottom:8px;">
+            {{ crop.harvest_start_month|month_name }} — {{ crop.harvest_end_month|month_name }}
+          </div>
+          <div class="timeline-bar">
+            <div class="timeline-fill harvest" style="left:55%; width:30%;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Your Guidance Section -->
+    <div class="card" style="padding:28px;">
+      <h2 style="font-size:1.2rem; font-weight:700; color:var(--gray-800); margin-bottom:20px; display:flex; align-items:center; gap:10px;">
+        <div style="width:36px; height:36px; background:#D1FAE5; border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#065F46" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        {% trans "Your Personalized Guidance" %}
+      </h2>
+
+      <!-- Planting Guidance -->
+      <div class="guidance-card plant" style="margin-bottom:16px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span class="badge badge-success">{% trans advisory.planting_status %}</span>
+          <span style="font-size:0.85rem; font-weight:600; color:var(--gray-700);">{% trans "Planting Status" %}</span>
+        </div>
+        <p style="color:var(--gray-600); font-size:0.92rem; line-height:1.7;">{{ advisory.planting_detail }}</p>
+      </div>
+
+      <!-- Harvest Guidance -->
+      <div class="guidance-card harvest" style="margin-bottom:16px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span class="badge badge-warn">{% trans advisory.harvest_status %}</span>
+          <span style="font-size:0.85rem; font-weight:600; color:var(--gray-700);">{% trans "Harvest Status" %}</span>
+        </div>
+        <p style="color:var(--gray-600); font-size:0.92rem; line-height:1.7;">{{ advisory.harvest_detail }}</p>
+      </div>
+
+      <!-- Weather Notes -->
+      {% if advisory.weather_notes %}
+      <div class="guidance-card weather">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span class="badge badge-info">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            {% trans "Weather" %}
+          </span>
+          <span style="font-size:0.85rem; font-weight:600; color:var(--gray-700);">{% trans "Weather Advisory" %}</span>
+        </div>
+        <p style="color:var(--gray-600); font-size:0.92rem; line-height:1.7;">{{ advisory.weather_notes }}</p>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="card" style="padding:28px;">
+      <h2 style="font-size:1.1rem; font-weight:700; color:var(--gray-800); margin-bottom:14px;">{% trans "Past Recommendations" %}</h2>
+      {% if crop_history %}
+        <div style="display:grid; gap:10px;">
+          {% for item in crop_history %}
+            <div style="padding:12px; border:1px solid var(--gray-200); border-radius:var(--radius-md);">
+              <div style="display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap;">
+                <span class="badge badge-default">{{ item.severity }}</span>
+                <span class="muted">{{ item.generated_at|date:"Y-m-d H:i" }}</span>
+              </div>
+              <div style="margin-top:6px; font-size:0.9rem; color:var(--gray-700);">
+                {{ item.planting_status }} | {{ item.harvest_status }}
+              </div>
+              <div class="muted">{{ item.weather_notes|truncatechars:170 }}</div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="muted">{% trans "No historical recommendations yet." %}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Right Column: Quick Info Sidebar -->
+  <div style="display:flex; flex-direction:column; gap:20px;">
+    <!-- Quick Info -->
+    <div class="card" style="padding:24px;">
+      <h3 style="font-size:0.95rem; font-weight:700; color:var(--gray-700); margin-bottom:16px;">{% trans "Quick Info" %}</h3>
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:14px; border-bottom:1px solid var(--gray-100);">
+          <span style="font-size:0.85rem; color:var(--gray-500);">{% trans "Growing Zone" %}</span>
+          <span style="font-size:0.85rem; font-weight:600; color:var(--gray-800);">{{ crop.growing_zone.name }}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:14px; border-bottom:1px solid var(--gray-100);">
+          <span style="font-size:0.85rem; color:var(--gray-500);">{% trans "Category" %}</span>
+          <span style="font-size:0.85rem; font-weight:600; color:var(--gray-800);">{% trans crop.category %}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:14px; border-bottom:1px solid var(--gray-100);">
+          <span style="font-size:0.85rem; color:var(--gray-500);">{% trans "Planting Period" %}</span>
+          <span style="font-size:0.85rem; font-weight:600; color:var(--gray-800);">{{ crop.plant_start_month|month_name }} — {{ crop.plant_end_month|month_name }}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:0.85rem; color:var(--gray-500);">{% trans "Harvest Period" %}</span>
+          <span style="font-size:0.85rem; font-weight:600; color:var(--gray-800);">{{ crop.harvest_start_month|month_name }} — {{ crop.harvest_end_month|month_name }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Current Conditions -->
+    <div class="weather-widget">
+      <div style="position:relative; z-index:1;">
+        <h3 style="font-size:0.9rem; font-weight:600; opacity:0.8; margin-bottom:16px;">{% trans "Current Conditions" %}</h3>
+        <div style="display:flex; align-items:center; gap:16px; margin-bottom:16px;">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.2">
+            <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+          </svg>
+          <div>
+            <div style="font-size:1.8rem; font-weight:800; line-height:1;">{{ current_temp }}</div>
+            <div style="font-size:0.78rem; opacity:0.7;">{% trans "At your location" %}</div>
+          </div>
+        </div>
+        {% if weather_warning %}
+        <div style="display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.12); border-radius:var(--radius-md); padding:10px 14px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span style="font-size:0.82rem; font-weight:500;">{{ weather_warning }}</span>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="card" style="padding:20px;">
+      <h3 style="font-size:0.9rem; font-weight:700; color:var(--gray-700); margin-bottom:14px;">{% trans "Actions" %}</h3>
+      {% if is_tracked %}
+        <form method="post" action="{% url 'advisor:crop_untrack' crop.slug %}" style="margin-bottom:10px;">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger w-full" style="justify-content:center;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            {% trans "Remove from My List" %}
+          </button>
+        </form>
+      {% else %}
+        <form method="post" action="{% url 'advisor:crop_track' crop.slug %}" style="margin-bottom:10px;">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-primary w-full" style="justify-content:center;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            {% trans "Add to My List" %}
+          </button>
+        </form>
+      {% endif %}
+      <a href="{% url 'advisor:crop_library' %}" class="btn btn-secondary w-full" style="justify-content:center;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        {% trans "Back to Library" %}
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Responsive override -->
+<style>
+  @media (max-width: 900px) {
+    div[style*="grid-template-columns:1fr 380px"] {
+      grid-template-columns: 1fr !important;
+    }
+    .detail-hero h1 { font-size: 2rem !important; }
+  }
+</style>
+{% endblock %}

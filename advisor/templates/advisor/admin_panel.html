@@ -1,0 +1,737 @@
+{% extends "advisor/base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Admin Panel" %} — FarmWise{% endblock %}
+
+{% block extra_css %}
+<style>
+  .admin-layout {
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  /* ═══ Stat Cards ═══ */
+  .admin-stat {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(27,67,50,0.06);
+    box-shadow: var(--shadow-sm);
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    transition: all 0.35s var(--ease-out);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .admin-stat:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-3px);
+    border-color: var(--foam);
+  }
+
+  .admin-stat::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+  }
+
+  .admin-stat.users::after    { background: linear-gradient(90deg, var(--forest), var(--sage)); }
+  .admin-stat.crops::after    { background: linear-gradient(90deg, var(--emerald), var(--sage-light)); }
+  .admin-stat.weather::after  { background: linear-gradient(90deg, var(--blue), #93C5FD); }
+  .admin-stat.notifs::after   { background: linear-gradient(90deg, var(--amber), #FCD34D); }
+
+  .admin-stat-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .admin-stat-icon svg {
+    width: 26px;
+    height: 26px;
+  }
+
+  .admin-stat-icon.users   { background: var(--pale); color: var(--forest); }
+  .admin-stat-icon.crops   { background: #D1FAE5; color: #065F46; }
+  .admin-stat-icon.weather { background: var(--blue-light); color: #1E40AF; }
+  .admin-stat-icon.notifs  { background: var(--amber-light); color: #92400E; }
+
+  .admin-stat-value {
+    font-family: var(--font-sans);
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--gray-900);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+  }
+
+  .admin-stat-label {
+    font-size: 0.82rem;
+    color: var(--gray-500);
+    font-weight: 500;
+    margin-top: 2px;
+  }
+
+  .admin-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 28px;
+  }
+
+  @media (max-width: 1024px) {
+    .admin-stats-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 600px) {
+    .admin-stats-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ═══ Quick Actions ═══ */
+  .quick-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  @media (min-width: 600px) {
+    .quick-actions-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  }
+
+  @media (min-width: 1000px) {
+    .quick-actions-grid { grid-template-columns: repeat(4, 1fr); }
+  }
+
+  @media (min-width: 1200px) {
+    .quick-actions-grid { grid-template-columns: repeat(7, 1fr); }
+  }
+
+  .quick-action-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(27,67,50,0.06);
+    box-shadow: var(--shadow-xs);
+    padding: 20px 14px;
+    text-align: center;
+    transition: all 0.35s var(--ease-out);
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .quick-action-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+    border-color: var(--foam);
+    text-decoration: none;
+  }
+
+  .quick-action-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s var(--ease-out);
+  }
+
+  .quick-action-card:hover .quick-action-icon {
+    transform: scale(1.1);
+  }
+
+  .quick-action-icon svg { width: 24px; height: 24px; }
+
+  .quick-action-icon.users   { background: var(--pale); color: var(--forest); }
+  .quick-action-icon.rules   { background: #D1FAE5; color: #065F46; }
+  .quick-action-icon.weather { background: var(--blue-light); color: #1E40AF; }
+  .quick-action-icon.history { background: var(--amber-light); color: #92400E; }
+
+  .quick-action-label {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--gray-700);
+  }
+
+  .quick-action-desc {
+    font-size: 0.78rem;
+    color: var(--gray-400);
+    line-height: 1.4;
+  }
+
+  @media (max-width: 700px) {
+    .quick-action-card { padding: 16px 10px; gap: 8px; }
+    .quick-action-icon { width: 40px; height: 40px; }
+    .quick-action-icon svg { width: 18px; height: 18px; }
+    .quick-action-label { font-size: 0.82rem; }
+    .quick-action-desc { font-size: 0.72rem; }
+  }
+
+  /* ═══ Bottom Panels ═══ */
+  .panels-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  @media (max-width: 900px) {
+    .panels-grid { grid-template-columns: 1fr; }
+  }
+
+  .panel-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(27,67,50,0.06);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--gray-100);
+  }
+
+  .panel-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .panel-header-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .panel-header-icon svg { width: 18px; height: 18px; }
+
+  .panel-header-icon.failures { background: var(--red-light); color: #991B1B; }
+  .panel-header-icon.activity { background: var(--blue-light); color: #1E40AF; }
+
+  .panel-header h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--gray-800);
+    margin: 0;
+  }
+
+  .panel-count {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: var(--radius-full);
+    background: var(--gray-100);
+    color: var(--gray-600);
+  }
+
+  .panel-count.has-items {
+    background: var(--red-light);
+    color: #991B1B;
+  }
+
+  .panel-body {
+    padding: 0;
+  }
+
+  .panel-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--gray-50);
+    transition: background 0.2s ease;
+  }
+
+  .panel-row:last-child {
+    border-bottom: none;
+  }
+
+  .panel-row:hover {
+    background: var(--gray-50);
+  }
+
+  .panel-row-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .panel-row-icon.error {
+    background: var(--red-light);
+    color: var(--red);
+  }
+
+  .panel-row-icon.audit {
+    background: var(--blue-light);
+    color: var(--blue);
+  }
+
+  .panel-row-icon svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .panel-row-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .panel-row-main {
+    font-size: 0.88rem;
+    color: var(--gray-800);
+    line-height: 1.5;
+  }
+
+  .panel-row-main strong {
+    font-weight: 600;
+  }
+
+  .panel-row-sub {
+    font-size: 0.78rem;
+    color: var(--gray-400);
+    margin-top: 2px;
+  }
+
+  .panel-row-time {
+    font-size: 0.75rem;
+    color: var(--gray-400);
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+
+  /* ═══ Empty State ═══ */
+  .panel-empty {
+    padding: 40px 24px;
+    text-align: center;
+  }
+
+  .panel-empty svg {
+    width: 48px;
+    height: 48px;
+    color: var(--gray-300);
+    margin: 0 auto 12px;
+  }
+
+  .panel-empty p {
+    font-size: 0.88rem;
+    color: var(--gray-400);
+    margin: 0;
+  }
+
+  /* ═══ Admin Badge ═══ */
+  .admin-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    background: linear-gradient(135deg, var(--forest), var(--emerald));
+    color: var(--white);
+    border-radius: var(--radius-full);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    box-shadow: var(--shadow-green);
+  }
+
+  /* ═══ Status Indicator ═══ */
+  .status-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82rem;
+    font-weight: 500;
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  .status-dot.green {
+    background: var(--sage);
+    box-shadow: 0 0 0 3px rgba(82,183,136,0.2);
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  /* ═══ System Health Bar ═══ */
+  .health-bar-container {
+    margin-top: 8px;
+  }
+
+  .health-bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    color: var(--gray-500);
+    margin-bottom: 6px;
+  }
+
+  .health-bar {
+    height: 6px;
+    background: var(--gray-100);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+  }
+
+  .health-bar-fill {
+    height: 100%;
+    border-radius: var(--radius-full);
+    transition: width 1s var(--ease-out);
+  }
+
+  .health-bar-fill.green  { background: linear-gradient(90deg, var(--sage), var(--sage-light)); }
+  .health-bar-fill.amber  { background: linear-gradient(90deg, var(--amber), #FCD34D); }
+  .health-bar-fill.red    { background: linear-gradient(90deg, var(--red), #FCA5A5); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-layout">
+
+  <!-- ═══ Page Header ═══ -->
+  <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:32px; flex-wrap:wrap; gap:16px;" class="animate-in">
+    <div>
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+        <h1 style="font-family:var(--font-display); font-size:2rem; font-weight:800; color:var(--forest); letter-spacing:-0.02em; line-height:1.2;">
+          {% trans "Admin Control Panel" %}
+        </h1>
+        <span class="admin-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          {% trans "Admin" %}
+        </span>
+      </div>
+      <p style="color:var(--gray-500); font-size:0.95rem;">
+        {% trans "Manage users, rules, weather data sources, and monitor operational status." %}
+      </p>
+    </div>
+    <div class="status-indicator" style="margin-top:8px;">
+      <span class="status-dot green"></span>
+      <span style="color:var(--sage); font-weight:600;">{% trans "System Operational" %}</span>
+    </div>
+  </div>
+
+  <!-- ═══ Stats Grid ═══ -->
+  <div class="admin-stats-grid animate-in animate-delay-1">
+    <!-- Users -->
+    <div class="admin-stat users">
+      <div class="admin-stat-icon users">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </div>
+      <div>
+        <div class="admin-stat-value">{{ total_users }}</div>
+        <div class="admin-stat-label">{% trans "Registered Profiles" %}</div>
+      </div>
+    </div>
+
+    <!-- Tracked Crops -->
+    <div class="admin-stat crops">
+      <div class="admin-stat-icon crops">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a10 10 0 0 0-7.5 16.5L12 22l7.5-3.5A10 10 0 0 0 12 2z"/>
+          <path d="M12 6v6l4 2"/>
+        </svg>
+      </div>
+      <div>
+        <div class="admin-stat-value">{{ tracked_crops }}</div>
+        <div class="admin-stat-label">{% trans "Tracked Crop Entries" %}</div>
+      </div>
+    </div>
+
+    <!-- Weather Sources -->
+    <div class="admin-stat weather">
+      <div class="admin-stat-icon weather">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+      </div>
+      <div>
+        <div class="admin-stat-value">{{ weather_source_count }}</div>
+        <div class="admin-stat-label">{% trans "Active Weather Sources" %}</div>
+      </div>
+    </div>
+
+    <!-- Pending Notifications -->
+    <div class="admin-stat notifs">
+      <div class="admin-stat-icon notifs">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+      </div>
+      <div>
+        <div class="admin-stat-value">{{ pending_notifications }}</div>
+        <div class="admin-stat-label">{% trans "Pending Notifications" %}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Quick Actions ═══ -->
+  <div style="margin-bottom:8px;" class="animate-in animate-delay-2">
+    <h2 style="font-size:1rem; font-weight:700; color:var(--gray-700); margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gray-400)" stroke-width="2" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      {% trans "Quick Actions" %}
+    </h2>
+  </div>
+
+  <div class="quick-actions-grid animate-in animate-delay-2">
+    <a href="{% url 'advisor:admin_crops' %}" class="quick-action-card">
+      <div class="quick-action-icon rules" style="background:#FEF9C3;color:#92400E;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a10 10 0 0 0-7.5 16.5L12 22l7.5-3.5A10 10 0 0 0 12 2z"/>
+          <path d="M12 6v6l4 2"/>
+        </svg>
+      </div>
+      <div class="quick-action-label">{% trans "Manage Crops" %}</div>
+      <div class="quick-action-desc">{% trans "Add, edit, delete crops & upload images" %}</div>
+    </a>
+
+    <a href="{% url 'advisor:admin_users' %}" class="quick-action-card">
+      <div class="quick-action-icon users">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </div>
+      <div class="quick-action-label">{% trans "Manage Users" %}</div>
+      <div class="quick-action-desc">{% trans "View, edit, and manage farmer accounts" %}</div>
+    </a>
+
+    <a href="{% url 'advisor:admin_rules' %}" class="quick-action-card">
+      <div class="quick-action-icon rules">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+          <polyline points="10 9 9 9 8 9"/>
+        </svg>
+      </div>
+      <div class="quick-action-label">{% trans "Advisory Rules" %}</div>
+      <div class="quick-action-desc">{% trans "Configure planting and harvest rules" %}</div>
+    </a>
+
+    <a href="{% url 'advisor:admin_weather_sources' %}" class="quick-action-card">
+      <div class="quick-action-icon weather">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>
+        </svg>
+      </div>
+      <div class="quick-action-label">{% trans "Weather Sources" %}</div>
+      <div class="quick-action-desc">{% trans "Manage Open-Meteo and data providers" %}</div>
+    </a>
+
+    <a href="{% url 'advisor:admin_advisory_history' %}" class="quick-action-card">
+      <div class="quick-action-icon history">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 6 12 12 16 14"/>
+        </svg>
+      </div>
+      <div class="quick-action-label">{% trans "Advisory History" %}</div>
+      <div class="quick-action-desc">{% trans "Review past alerts and notifications" %}</div>
+    </a>
+
+    <a href="{% url 'advisor:admin_register_farmer' %}" class="quick-action-card">
+      <div class="quick-action-icon users" style="background:linear-gradient(135deg,var(--forest),var(--sage)); color:var(--white);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <line x1="19" y1="8" x2="19" y2="14"/>
+          <line x1="22" y1="11" x2="16" y2="11"/>
+        </svg>
+      </div>
+      <div class="quick-action-label">{% trans "Register Farmer" %}</div>
+      <div class="quick-action-desc">{% trans "Add offline farmers — they receive SMS advisories" %}</div>
+    </a>
+
+    <!-- <a href="{% url 'advisor:admin_broadcast_sms' %}" class="quick-action-card">
+      <div class="quick-action-icon" style="background:linear-gradient(135deg,#7C3AED,#A78BFA); color:var(--white);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.65 3.38 2 2 0 0 1 3.62 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6.18 6.18l.91-.91a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+        </svg>
+      </div>
+      <div class="quick-action-label">{% trans "Broadcast SMS" %}</div>
+      <div class="quick-action-desc">{% trans "Send a custom message to all farmers of a crop" %}</div>
+    </a> -->
+  </div>
+
+  <!-- ═══ System Health Section ═══ -->
+  <div class="card animate-in animate-delay-3" style="margin-bottom:28px; padding:24px;">
+    <h2 style="font-size:1rem; font-weight:700; color:var(--gray-700); margin-bottom:18px; display:flex; align-items:center; gap:8px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gray-400)" stroke-width="2" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      {% trans "System Health" %}
+    </h2>
+    <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:24px;">
+      <div class="health-bar-container">
+        <div class="health-bar-label">
+          <span>{% trans "API Response" %}</span>
+          <span style="font-weight:600; color:var(--sage);">{% trans "Healthy" %}</span>
+        </div>
+        <div class="health-bar">
+          <div class="health-bar-fill green" style="width:96%;"></div>
+        </div>
+      </div>
+      <div class="health-bar-container">
+        <div class="health-bar-label">
+          <span>{% trans "Notification Queue" %}</span>
+          <span style="font-weight:600; color:var(--amber);">{% blocktrans with n=pending_notifications %}{{ n }} pending{% endblocktrans %}</span>
+        </div>
+        <div class="health-bar">
+          <div class="health-bar-fill {% if pending_notifications > 50 %}red{% elif pending_notifications > 10 %}amber{% else %}green{% endif %}" style="width:{% widthratio pending_notifications 100 100 %}%; max-width:100%;"></div>
+        </div>
+      </div>
+      <div class="health-bar-container">
+        <div class="health-bar-label">
+          <span>{% trans "Weather Sync" %}</span>
+          <span style="font-weight:600; color:var(--sage);">{% trans "Active" %}</span>
+        </div>
+        <div class="health-bar">
+          <div class="health-bar-fill green" style="width:100%;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Bottom Panels ═══ -->
+  <div class="panels-grid animate-in animate-delay-4">
+
+    <!-- Recent Failures Panel -->
+    <div class="panel-card">
+      <div class="panel-header">
+        <div class="panel-header-left">
+          <div class="panel-header-icon failures">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="15" y1="9" x2="9" y2="15"/>
+              <line x1="9" y1="9" x2="15" y2="15"/>
+            </svg>
+          </div>
+          <h3>{% trans "Recent Notification Failures" %}</h3>
+        </div>
+        {% if recent_failures %}
+          <span class="panel-count has-items">{{ recent_failures|length }}</span>
+        {% else %}
+          <span class="panel-count">0</span>
+        {% endif %}
+      </div>
+      <div class="panel-body">
+        {% if recent_failures %}
+          {% for row in recent_failures %}
+            <div class="panel-row">
+              <div class="panel-row-icon error">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"/>
+                  <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </div>
+              <div class="panel-row-content">
+                <div class="panel-row-main">
+                  <strong>{{ row.profile.user.username }}</strong>
+                  <span style="color:var(--gray-400);"> — </span>
+                  <span class="badge badge-danger" style="font-size:0.7rem; padding:2px 8px;">{{ row.category }}</span>
+                </div>
+                <div class="panel-row-sub">{{ row.error_message|default:_("Delivery failed") }}</div>
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="panel-empty">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+            <p>{% trans "No failures logged. All systems healthy!" %}</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Recent Admin Activity Panel -->
+    <div class="panel-card">
+      <div class="panel-header">
+        <div class="panel-header-left">
+          <div class="panel-header-icon activity">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+          <h3>{% trans "Recent Admin Activity" %}</h3>
+        </div>
+        {% if recent_audits %}
+          <span class="panel-count">{{ recent_audits|length }}</span>
+        {% else %}
+          <span class="panel-count">0</span>
+        {% endif %}
+      </div>
+      <div class="panel-body">
+        {% if recent_audits %}
+          {% for row in recent_audits %}
+            <div class="panel-row">
+              <div class="panel-row-icon audit">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </div>
+              <div class="panel-row-content">
+                <div class="panel-row-main">
+                  <strong>{{ row.action }}</strong>
+                  <span style="color:var(--gray-400);"> — </span>
+                  <span style="color:var(--gray-500);">{{ row.target_type }}</span>
+                </div>
+                <div class="panel-row-sub">{{ row.created_at|date:"Y-m-d H:i" }}</div>
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="panel-empty">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <p>{% trans "No recent audit entries." %}</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}

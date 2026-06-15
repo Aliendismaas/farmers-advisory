@@ -1,0 +1,1388 @@
+# Swahili translations for FarmWise
+# Copyright (C) 2025
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: sw\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+# ─── Language names ───
+msgid "English"
+msgstr "Kiingereza"
+
+msgid "Swahili"
+msgstr "Kiswahili"
+
+# ─── Navigation ───
+msgid "Dashboard"
+msgstr "Dashibodi"
+
+msgid "Crops"
+msgstr "Mazao"
+
+msgid "Location"
+msgstr "Mahali"
+
+msgid "Alerts"
+msgstr "Tahadhari"
+
+msgid "Log out"
+msgstr "Toka"
+
+msgid "Log in"
+msgstr "Ingia"
+
+msgid "Get Started"
+msgstr "Anza"
+
+# ─── Login page ───
+msgid "Sign In"
+msgstr "Ingia"
+
+msgid "Welcome Back to FarmWise"
+msgstr "Karibu Tena FarmWise"
+
+msgid "Sign in to access your personalized dashboard, track your crops, and get the latest weather advisories for your farm."
+msgstr "Ingia ili kupata dashibodi yako, kufuatilia mazao yako, na kupata ushauri wa hali ya hewa wa shamba lako."
+
+msgid "Sign in"
+msgstr "Ingia"
+
+msgid "Welcome back! Sign in with your phone number and password."
+msgstr "Karibu tena! Ingia kwa nambari yako ya simu na nenosiri."
+
+msgid "Phone number"
+msgstr "Nambari ya simu"
+
+msgid "Password"
+msgstr "Nenosiri"
+
+msgid "Enter your phone number"
+msgstr "Weka nambari yako ya simu"
+
+msgid "Enter your password"
+msgstr "Weka nenosiri lako"
+
+msgid "Signing in…"
+msgstr "Inasakinisha…"
+
+msgid "Don't have an account?"
+msgstr "Huna akaunti?"
+
+msgid "Create one free"
+msgstr "Fungua bure"
+
+# ─── Register page ───
+msgid "Create Account"
+msgstr "Fungua Akaunti"
+
+msgid "Start Your Farming Journey"
+msgstr "Anza Safari Yako ya Kilimo"
+
+msgid "Create a free account with your phone number to unlock personalized crop advisories, weather forecasts, and SMS-ready alerts."
+msgstr "Fungua akaunti ya bure kwa nambari yako ya simu ili kupata ushauri wa mazao, utabiri wa hali ya hewa, na tahadhari za SMS."
+
+msgid "Free Forever"
+msgstr "Bure Milele"
+
+msgid "No hidden costs or premium tiers"
+msgstr "Hakuna gharama zilizofichwa au vipengele vya malipo"
+
+msgid "Phone Number Login"
+msgstr "Kuingia kwa Nambari ya Simu"
+
+msgid "No email required to get started"
+msgstr "Hakuna barua pepe inayohitajika kuanza"
+
+msgid "Instant Access"
+msgstr "Ufikiaji wa Papo Hapo"
+
+msgid "Start tracking your crops right away"
+msgstr "Anza kufuatilia mazao yako mara moja"
+
+msgid "Create account"
+msgstr "Fungua akaunti"
+
+msgid "Join FarmWise and start making smarter farming decisions today."
+msgstr "Jiunge na FarmWise na uanze kufanya maamuzi bora ya kilimo leo."
+
+msgid "This will be your login identifier."
+msgstr "Hii itakuwa kitambulisho chako cha kuingia."
+
+msgid "Create a strong password"
+msgstr "Tengeneza nenosiri imara"
+
+msgid "Confirm password"
+msgstr "Thibitisha nenosiri"
+
+msgid "Repeat your password"
+msgstr "Rudia nenosiri lako"
+
+msgid "Create Account"
+msgstr "Fungua Akaunti"
+
+msgid "Creating account…"
+msgstr "Inafungua akaunti…"
+
+msgid "Already have an account?"
+msgstr "Una akaunti tayari?"
+
+# ─── Dashboard ───
+msgid "Good"
+msgstr "Habari"
+
+msgid "Add Crop"
+msgstr "Ongeza Zao"
+
+msgid "Tracked Crops"
+msgstr "Mazao Yanayofuatiliwa"
+
+msgid "Set"
+msgstr "Imewekwa"
+
+msgid "Not Set"
+msgstr "Haijawekwa"
+
+msgid "Quick Actions"
+msgstr "Vitendo vya Haraka"
+
+msgid "Browse Crops"
+msgstr "Angalia Mazao"
+
+msgid "Update Location"
+msgstr "Sasisha Mahali"
+
+msgid "Refresh Data"
+msgstr "Onyesha Upya"
+
+msgid "My Crops"
+msgstr "Mazao Yangu"
+
+msgid "No crops tracked yet"
+msgstr "Hakuna mazao yanayofuatiliwa bado"
+
+msgid "Start by adding crops from the library. We'll provide personalized planting and harvest timing guidance for each one."
+msgstr "Anza kwa kuongeza mazao kutoka maktabani. Tutatoa mwongozo wa kupanda na kuvuna kwa kila mmoja."
+
+msgid "Browse Crop Library"
+msgstr "Angalia Maktaba ya Mazao"
+
+msgid "Planting"
+msgstr "Kupanda"
+
+msgid "Harvest"
+msgstr "Kuvuna"
+
+msgid "Recent Advisory History"
+msgstr "Historia ya Hivi Karibuni ya Ushauri"
+
+msgid "Alert Settings"
+msgstr "Mipangilio ya Tahadhari"
+
+msgid "No advisory history yet."
+msgstr "Hakuna historia ya ushauri bado."
+
+# ─── Advisory status labels (stored in DB as English, translated in templates) ───
+msgid "In season"
+msgstr "Wakati wa kupanda"
+
+msgid "Outside window"
+msgstr "Nje ya muda"
+
+msgid "Marginal"
+msgstr "Kando ya muda"
+
+msgid "Harvest window"
+msgstr "Wakati wa mavuno"
+
+msgid "Not peak harvest"
+msgstr "Si wakati mkuu wa mavuno"
+
+# ─── Advisory detail text (from advisory.py) ───
+msgid "This month falls within the typical planting window for your zone."
+msgstr "Mwezi huu uko ndani ya muda wa kawaida wa kupanda kwa eneo lako."
+
+msgid "Typical planting months for this crop in your zone do not include the current month (%(month)s). Check again closer to the season."
+msgstr "Miezi ya kawaida ya kupanda zao hili katika eneo lako haijumuishi mwezi huu (%(month)s). Angalia tena ukikaribia msimu."
+
+msgid "This month is within the typical harvest period for this crop in your zone."
+msgstr "Mwezi huu uko ndani ya kipindi cha kawaida cha kuvuna zao hili katika eneo lako."
+
+msgid "Peak harvest months for this crop differ from the current month; this is a general calendar guide only."
+msgstr "Miezi ya mavuno ya zao hili ni tofauti na mwezi huu; hii ni mwongozo wa kalenda tu."
+
+msgid "Next ~14 days include %(days)s day(s) with cold lows (frost risk possible); delay sensitive planting if unsure."
+msgstr "Siku ~14 zijazo zina siku %(days)s zenye baridi kali (hatari ya theluji inawezekana); chelewesha kupanda mazao nyepesi ukiwa na wasiwasi."
+
+msgid "%(days)s hot day(s) forecast; ensure irrigation if planting or flowering."
+msgstr "Siku %(days)s za joto zimetabiriwa; hakikisha kumwagilia maji ukipanda au ukichanua."
+
+msgid "Heavy rain possible on %(days)s day(s); consider soil drainage before planting."
+msgstr "Mvua kubwa inawezekana katika siku %(days)s; fikiria mifereji ya udongo kabla ya kupanda."
+
+msgid "Weather outlook shows repeated cold nights; treat as marginal."
+msgstr "Hali ya hewa inaonyesha usiku wa baridi mara kwa mara; chukulia kama wakati wa kando."
+
+msgid "Sustained heat in the forecast; irrigate and avoid heat-stress windows if possible."
+msgstr "Joto la muda mrefu limetabiriwa; mwagilia maji na epuka nyakati za msongo wa joto ikiwezekana."
+
+# ─── Advisory Preference page ───
+msgid "Advisory Preference"
+msgstr "Aina ya Ushauri"
+
+msgid "What advisories do you want?"
+msgstr "Unataka ushauri gani?"
+
+msgid "Choose the type of farming guidance you'd like to receive on your dashboard and by SMS."
+msgstr "Chagua aina ya mwongozo wa kilimo ambao ungependa kupokea kwenye dashibodi yako na kwa SMS."
+
+msgid "You can change this at any time from your profile settings."
+msgstr "Unaweza kubadilisha hili wakati wowote kutoka mipangilio ya wasifu wako."
+
+msgid "Planting Advisory"
+msgstr "Ushauri wa Kupanda"
+
+msgid "Get guidance on the best time to plant your crops — ideal windows, soil prep, weather risks before and during planting."
+msgstr "Pata mwongozo wa wakati bora wa kupanda mazao yako — muda mzuri, maandalizi ya udongo, hatari za hali ya hewa kabla na wakati wa kupanda."
+
+msgid "Harvest Advisory"
+msgstr "Ushauri wa Kuvuna"
+
+msgid "Know when your crops are ready to harvest and get alerts about weather that could damage your yield at harvest time."
+msgstr "Jua wakati mazao yako yako tayari kuvunwa na upate tahadhari za hali ya hewa inayoweza kudhuru mavuno yako."
+
+msgid "Both — Full Advisory"
+msgstr "Yote Mawili — Ushauri Kamili"
+
+msgid "Receive complete guidance covering both planting and harvest windows for all your crops."
+msgstr "Pata mwongozo kamili unaojumuisha muda wa kupanda na kuvuna kwa mazao yako yote."
+
+msgid "Save & Go to Dashboard"
+msgstr "Hifadhi na Nenda Dashibodini"
+
+msgid "You can update this preference anytime from Profile Settings."
+msgstr "Unaweza kusasisha chaguo hili wakati wowote kutoka Mipangilio ya Wasifu."
+
+# ─── Notification Preferences page ───
+msgid "Notification Preferences"
+msgstr "Mipangilio ya Arifa"
+
+msgid "Choose how weather and advisory alerts should reach you."
+msgstr "Chagua jinsi tahadhari za hali ya hewa na ushauri zinavyopaswa kukufikia."
+
+msgid "Live Preview"
+msgstr "Muonekano wa Moja kwa Moja"
+
+msgid "SMS Alerts"
+msgstr "Tahadhari za SMS"
+
+msgid "Text messages to your phone"
+msgstr "Ujumbe wa maandishi kwenye simu yako"
+
+msgid "Emergency Alerts Only"
+msgstr "Tahadhari za Dharura Peke Yake"
+
+msgid "Only critical weather warnings"
+msgstr "Tahadhari muhimu za hali ya hewa peke yake"
+
+msgid "Voice Alerts"
+msgstr "Tahadhari za Sauti"
+
+msgid "Spoken alerts via phone call"
+msgstr "Tahadhari za kusemwa kwa simu"
+
+msgid "Receive text messages for planting reminders, weather warnings, and harvest advisories directly on your phone."
+msgstr "Pokea ujumbe wa maandishi wa kukumbusha kupanda, tahadhari za hali ya hewa, na ushauri wa kuvuna moja kwa moja kwenye simu yako."
+
+msgid "Only get notified for critical weather events like storms, frost, or extreme heat. Routine advisories will be silenced."
+msgstr "Pata arifa tu kwa matukio muhimu ya hali ya hewa kama dhoruba, theluji, au joto kali. Ushauri wa kawaida utanyamazishwa."
+
+msgid "Get spoken alerts via phone call for urgent advisories. Useful when you're out in the field and can't check text messages."
+msgstr "Pata tahadhari za kusemwa kwa simu kwa ushauri wa haraka. Muhimu unapokuwa shambani na huwezi kuangalia ujumbe."
+
+msgid "Off"
+msgstr "Zima"
+
+msgid "On"
+msgstr "Washa"
+
+msgid "Your preferences are saved securely and used only for advisory notifications."
+msgstr "Mipangilio yako imehifadhiwa salama na inatumika tu kwa arifa za ushauri."
+
+msgid "Save Preferences"
+msgstr "Hifadhi Mipangilio"
+
+# ─── Profile Settings page ───
+msgid "Profile Settings"
+msgstr "Mipangilio ya Wasifu"
+
+msgid "Update your contact details and login phone number."
+msgstr "Sasisha maelezo yako ya mawasiliano na nambari ya simu ya kuingia."
+
+msgid "Back to Dashboard"
+msgstr "Rudi Dashibodini"
+
+msgid "Role"
+msgstr "Jukumu"
+
+msgid "Not set"
+msgstr "Haijawekwa"
+
+msgid "Contact Details"
+msgstr "Maelezo ya Mawasiliano"
+
+msgid "login identifier"
+msgstr "kitambulisho cha kuingia"
+
+msgid "Changing this updates your login phone number."
+msgstr "Kubadilisha hili kunasasisha nambari yako ya simu ya kuingia."
+
+msgid "Save Changes"
+msgstr "Hifadhi Mabadiliko"
+
+msgid "Cancel"
+msgstr "Ghairi"
+
+msgid "Farm Location"
+msgstr "Mahali pa Shamba"
+
+msgid "Currently set to"
+msgstr "Imewekwa sasa kwa"
+
+msgid "No location set yet."
+msgstr "Hakuna mahali kulikowekwa bado."
+
+msgid "Update Farm Location"
+msgstr "Sasisha Mahali pa Shamba"
+
+# ─── Notification History page ───
+msgid "Notification History"
+msgstr "Historia ya Arifa"
+
+msgid "Your recent SMS alerts and advisory notifications."
+msgstr "Tahadhari zako za hivi karibuni za SMS na arifa za ushauri."
+
+msgid "Type"
+msgstr "Aina"
+
+msgid "Message"
+msgstr "Ujumbe"
+
+msgid "Status"
+msgstr "Hali"
+
+msgid "Date"
+msgstr "Tarehe"
+
+msgid "Emergency"
+msgstr "Dharura"
+
+msgid "Advisory"
+msgstr "Ushauri"
+
+msgid "Sent"
+msgstr "Imetumwa"
+
+msgid "Failed"
+msgstr "Imeshindwa"
+
+msgid "Pending"
+msgstr "Inasubiri"
+
+msgid "No notifications yet"
+msgstr "Hakuna arifa bado"
+
+msgid "Emergency weather alerts and advisory messages will appear here once they're sent."
+msgstr "Tahadhari za hali ya hewa ya dharura na ujumbe wa ushauri vitaonekana hapa vikishatumwa."
+
+msgid "Configure Alerts"
+msgstr "Sanidi Tahadhari"
+
+# ─── Password Reset ───
+msgid "Reset Password"
+msgstr "Weka Upya Nenosiri"
+
+msgid "Password updated"
+msgstr "Nenosiri limesasishwa"
+
+msgid "Your password has been set. You can now log in with your new password."
+msgstr "Nenosiri lako limewekwa. Unaweza sasa kuingia kwa nenosiri lako jipya."
+
+msgid "Set new password"
+msgstr "Weka nenosiri jipya"
+
+msgid "Save password"
+msgstr "Hifadhi nenosiri"
+
+msgid "This reset link is invalid or has expired. Request a new one."
+msgstr "Kiungo hiki cha kuweka upya ni batili au kimeisha muda. Omba kipya."
+
+msgid "Request again"
+msgstr "Omba tena"
+
+msgid "Email sent"
+msgstr "Barua pepe imetumwa"
+
+msgid "Check your email"
+msgstr "Angalia barua pepe yako"
+
+msgid "If an account exists for that address, you will receive a reset link shortly."
+msgstr "Ikiwa akaunti ipo kwa anwani hiyo, utapokea kiungo cha kuweka upya hivi karibuni."
+
+msgid "Back to log in"
+msgstr "Rudi kuingia"
+
+msgid "Reset password"
+msgstr "Weka upya nenosiri"
+
+msgid "Enter your email address and we'll send you reset instructions."
+msgstr "Weka anwani yako ya barua pepe na tutakutumia maelekezo ya kuweka upya."
+
+msgid "Email me instructions"
+msgstr "Nitumie maelekezo kwa barua pepe"
+
+# ─── Home page ───
+msgid "Iringa Region Farming Advisor"
+msgstr "Mshauri wa Kilimo wa Mkoa wa Iringa"
+
+msgid "Built for Iringa Region Farmers"
+msgstr "Imejengwa kwa Wakulima wa Mkoa wa Iringa"
+
+msgid "Grow Smarter,"
+msgstr "Kua kwa Akili,"
+
+msgid "Harvest Better"
+msgstr "Vuna Vizuri Zaidi"
+
+msgid "A free advisory tool for farmers in Iringa Region, Tanzania. Register your location, pick the crops you grow — Maize, Irish Potatoes, Onions, Avocado, Wheat, and more — and receive planting and harvest guidance matched to Iringa's highland seasons."
+msgstr "Zana ya bure ya ushauri kwa wakulima wa Mkoa wa Iringa, Tanzania. Sajili eneo lako, chagua mazao unayolima — Mahindi, Viazi vya Ulaya, Vitunguu, Parachichi, Ngano, na zaidi — na upokee mwongozo wa kupanda na kuvuna unaofaa na misimu ya milima ya Iringa."
+
+msgid "Get Started Free"
+msgstr "Anza Bure"
+
+msgid "Serving Iringa Region farmers"
+msgstr "Kutumikia wakulima wa Mkoa wa Iringa"
+
+msgid "Iringa Region, Tanzania"
+msgstr "Mkoa wa Iringa, Tanzania"
+
+msgid "Good Morning, Farmer"
+msgstr "Habari za Asubuhi, Mkulima"
+
+msgid "Your Farm Overview"
+msgstr "Muhtasari wa Shamba Lako"
+
+msgid "Current Weather"
+msgstr "Hali ya Hewa Sasa"
+
+msgid "Partly Cloudy"
+msgstr "Mawingu Kidogo"
+
+msgid "Active Crops"
+msgstr "Mazao Yanayoendelea"
+
+msgid "+2 this month"
+msgstr "+2 mwezi huu"
+
+msgid "Harvest Ready"
+msgstr "Tayari Kuvuna"
+
+msgid "Within 2 weeks"
+msgstr "Ndani ya wiki 2"
+
+msgid "Plant Now!"
+msgstr "Panda Sasa!"
+
+msgid "Why FarmWise"
+msgstr "Kwa Nini FarmWise"
+
+msgid "Everything You Need to Farm Smarter"
+msgstr "Kila Kitu Unachohitaji Kulima kwa Akili"
+
+msgid "Powerful tools and real-time data to help you make the best decisions for your farm, from planting to harvest."
+msgstr "Zana zenye nguvu na data ya wakati halisi kukusaidia kufanya maamuzi bora kwa shamba lako, kutoka upandaji hadi uvunaji."
+
+msgid "Location-Based Forecasts"
+msgstr "Utabiri Kulingana na Eneo"
+
+msgid "Set your farm location within Iringa Region and receive accurate, hyper-local weather data powered by Open-Meteo — tuned to Iringa's highland elevation and unimodal rainfall season."
+msgstr "Weka eneo la shamba lako ndani ya Mkoa wa Iringa na upokee data sahihi ya hali ya hewa ya eneo lako kupitia Open-Meteo — iliyorekebishwa kwa urefu wa milima ya Iringa na msimu wa mvua."
+
+msgid "Weather-Smart Advisories"
+msgstr "Ushauri Unaotegemea Hali ya Hewa"
+
+msgid "Receive timely warnings about extreme weather, frost risk, and optimal planting windows. Never get caught off guard by unpredictable conditions again."
+msgstr "Pokea onyo la mapema kuhusu hali mbaya ya hewa, hatari ya theluji, na nyakati bora za kupanda. Usishtushwe tena na hali zisizotarajiwa."
+
+msgid "Regional Crop Calendar"
+msgstr "Kalenda ya Mazao ya Mkoa"
+
+msgid "Browse a curated library of crops grown in Iringa Region — Maize, Wheat, Irish Potatoes, Onions, Avocado, Common Beans, Sunflower, Tomatoes, and more — with planting and harvest windows matched to Iringa's long-rains season (November–April)."
+msgstr "Vinjari mkusanyiko wa mazao yanayolimwa Mkoa wa Iringa — Mahindi, Ngano, Viazi vya Ulaya, Vitunguu, Parachichi, Maharagwe ya kawaida, Alizeti, Nyanya, na zaidi — na nyakati za kupanda na kuvuna zinazolingana na msimu wa mvua wa Iringa (Novemba–Aprili)."
+
+msgid "Track Your Crops"
+msgstr "Fuatilia Mazao Yako"
+
+msgid "Build your personal crop list and monitor planting and harvest statuses at a glance. Keep your farm organized and always know what needs attention next."
+msgstr "Jenga orodha yako ya mazao na ufuatilie hali ya upandaji na uvunaji kwa haraka. Weka shamba lako likiwa na mpangilio na ujue daima kinachohitaji umakini."
+
+msgid "Early Warnings"
+msgstr "Onyo la Mapema"
+
+msgid "Get proactive alerts for weather events that could affect your crops. Stay ahead of storms, droughts, and temperature extremes with advance notice."
+msgstr "Pata tahadhari za mapema kwa hali za hewa zinazoweza kuathiri mazao yako. Kuwa tayari kwa dhoruba, ukame, na joto kali kwa taarifa ya mapema."
+
+msgid "Simple Dashboard"
+msgstr "Dashibodi Rahisi"
+
+msgid "Everything at a glance. Your dashboard shows weather, crop statuses, and advisories in one clean view. No complicated menus, just the information you need."
+msgstr "Kila kitu kwa mtazamo mmoja. Dashibodi yako inaonyesha hali ya hewa, hali za mazao, na ushauri katika muonekano mmoja. Hakuna menyu ngumu, tu taarifa unazohitaji."
+
+msgid "Quick Setup"
+msgstr "Usanidi wa Haraka"
+
+msgid "Up and Running in 3 Steps"
+msgstr "Anza kwa Hatua 3"
+
+msgid "From sign-up to personalized advisories in under two minutes."
+msgstr "Kutoka usajili hadi ushauri ulioboreshwa kwa chini ya dakika mbili."
+
+msgid "Create Your Account"
+msgstr "Fungua Akaunti Yako"
+
+msgid "Sign up in seconds with just a username and password. No email verification required."
+msgstr "Jisajili kwa sekunde chache kwa jina la mtumiaji na nenosiri tu. Hakuna uthibitisho wa barua pepe unaohitajika."
+
+msgid "Set Your Location"
+msgstr "Weka Eneo Lako"
+
+msgid "Search for your village, ward, or town within Iringa Region. We connect to local weather data for your exact farm location instantly."
+msgstr "Tafuta kijiji, kata, au mji wako ndani ya Mkoa wa Iringa. Tunaunganisha mara moja na data ya hali ya hewa ya mahali pa shamba lako."
+
+msgid "Pick Your Crops"
+msgstr "Chagua Mazao Yako"
+
+msgid "Browse the crop library, add what you grow, and start receiving tailored planting and harvest guidance."
+msgstr "Vinjari maktaba ya mazao, ongeza unayolima, na uanze kupokea mwongozo ulioboreshwa wa kupanda na kuvuna."
+
+msgid "Ready to Grow Smarter?"
+msgstr "Uko Tayari Kulima kwa Akili Zaidi?"
+
+msgid "Made for farmers in Iringa Region, Tanzania. Get personalized crop and weather guidance tailored to your highland farm — completely free."
+msgstr "Imetengenezwa kwa wakulima wa Mkoa wa Iringa, Tanzania. Pata mwongozo wa mazao na hali ya hewa ulioboreshwa kwa shamba lako la milima — bure kabisa."
+
+msgid "Create Free Account"
+msgstr "Fungua Akaunti Bure"
+
+# ─── Crop Library page ───
+msgid "Crop Library"
+msgstr "Maktaba ya Mazao"
+
+msgid "Browse crops and add them to your watchlist for personalized guidance."
+msgstr "Angalia mazao na uyaongeze kwenye orodha yako kwa mwongozo wa kibinafsi."
+
+msgid "Regional calendars are indicative only"
+msgstr "Kalenda za kikanda ni za mwongozo tu"
+
+msgid "always validate with your local agricultural extension office for the most accurate planting advice."
+msgstr "thibitisha daima na ofisi yako ya ugani wa kilimo kwa ushauri sahihi zaidi wa kupanda."
+
+msgid "All Crops"
+msgstr "Mazao Yote"
+
+msgid "Grains"
+msgstr "Nafaka"
+
+msgid "Vegetables"
+msgstr "Mboga"
+
+msgid "Fruits"
+msgstr "Matunda"
+
+msgid "Legumes"
+msgstr "Mikunde"
+
+msgid "Roots"
+msgstr "Mizizi"
+
+msgid "Cash Crops"
+msgstr "Mazao ya Biashara"
+
+msgid "View Details"
+msgstr "Angalia Maelezo"
+
+msgid "No crops in the catalog"
+msgstr "Hakuna mazao kwenye orodha"
+
+# ─── Crop Detail page ───
+msgid "On Your List"
+msgstr "Kwenye Orodha Yako"
+
+msgid "Current temperature:"
+msgstr "Joto la sasa:"
+
+msgid "Planting Window"
+msgstr "Muda wa Kupanda"
+
+msgid "Harvest Window"
+msgstr "Muda wa Kuvuna"
+
+msgid "About This Crop"
+msgstr "Kuhusu Zao Hili"
+
+msgid "Detailed information about this crop is coming soon. Check back later for updated growing guides and tips."
+msgstr "Maelezo ya kina ya zao hili yanakuja hivi karibuni. Angalia tena baadaye kwa miongozo iliyosasishwa ya ukuaji na vidokezo."
+
+msgid "Your Personalized Guidance"
+msgstr "Mwongozo Wako wa Kibinafsi"
+
+msgid "Planting Status"
+msgstr "Hali ya Kupanda"
+
+msgid "Harvest Status"
+msgstr "Hali ya Kuvuna"
+
+msgid "Weather"
+msgstr "Hali ya Hewa"
+
+msgid "Weather Advisory"
+msgstr "Ushauri wa Hali ya Hewa"
+
+msgid "Past Recommendations"
+msgstr "Mapendekezo ya Awali"
+
+msgid "No historical recommendations yet."
+msgstr "Hakuna mapendekezo ya awali bado."
+
+msgid "Quick Info"
+msgstr "Maelezo ya Haraka"
+
+msgid "Growing Zone"
+msgstr "Eneo la Ukuaji"
+
+msgid "Category"
+msgstr "Kategoria"
+
+msgid "Planting Period"
+msgstr "Kipindi cha Kupanda"
+
+msgid "Harvest Period"
+msgstr "Kipindi cha Kuvuna"
+
+msgid "Current Conditions"
+msgstr "Hali ya Sasa"
+
+msgid "At your location"
+msgstr "Katika mahali pako"
+
+msgid "Actions"
+msgstr "Vitendo"
+
+msgid "Remove from My List"
+msgstr "Ondoa Kwenye Orodha Yangu"
+
+msgid "Add to My List"
+msgstr "Ongeza Kwenye Orodha Yangu"
+
+msgid "Back to Library"
+msgstr "Rudi Maktabani"
+
+# ─── Onboarding (location) page ───
+msgid "Set Your Farm Location"
+msgstr "Weka Mahali pa Shamba Lako"
+
+msgid "Search for your village or town within"
+msgstr "Tafuta kijiji chako au mji ndani ya"
+
+msgid "Iringa Region"
+msgstr "Mkoa wa Iringa"
+
+msgid "and pick a result. We use this for your local weather forecast."
+msgstr "na chagua matokeo. Tunatumia hili kwa utabiri wako wa hali ya hewa wa ndani."
+
+msgid "Search for Your Location"
+msgstr "Tafuta Mahali Pako"
+
+msgid "Type your village, ward, or town name in Iringa Region"
+msgstr "Andika jina la kijiji, kata, au mji wako katika Mkoa wa Iringa"
+
+msgid "Search"
+msgstr "Tafuta"
+
+msgid "Searching…"
+msgstr "Inatafuta…"
+
+msgid "Select Your Location"
+msgstr "Chagua Mahali Pako"
+
+msgid "results found — pick the closest match"
+msgstr "matokeo yamepatikana — chagua inayofanana zaidi"
+
+msgid "Use This"
+msgstr "Tumia Hii"
+
+msgid "Your location is used only for weather data via Open-Meteo. We never share your data with third parties."
+msgstr "Mahali pako hutumiwa tu kwa data ya hali ya hewa kupitia Open-Meteo. Hatushirikishi data yako na wahusika wa tatu."
+
+# ─── Crop names ───
+msgid "Cotton"
+msgstr "Pamba"
+
+msgid "Maize (Vuli season)"
+msgstr "Mahindi (Msimu wa Vuli)"
+
+msgid "Maize (grain)"
+msgstr "Mahindi (nafaka)"
+
+msgid "Paddy rice"
+msgstr "Mpunga"
+
+msgid "Sorghum"
+msgstr "Mtama"
+
+msgid "Common beans"
+msgstr "Maharagwe ya kawaida"
+
+msgid "Dry beans"
+msgstr "Maharagwe makavu"
+
+msgid "Groundnuts (peanuts)"
+msgstr "Karanga"
+
+msgid "Sesame (simsim)"
+msgstr "Ufuta"
+
+msgid "Sunflower"
+msgstr "Alizeti"
+
+msgid "Cassava"
+msgstr "Muhogo"
+
+msgid "Irish potatoes"
+msgstr "Viazi vya Ulaya"
+
+msgid "Potatoes"
+msgstr "Viazi"
+
+msgid "Sweet potatoes"
+msgstr "Viazi vitamu"
+
+msgid "Onions"
+msgstr "Vitunguu"
+
+msgid "Tomatoes"
+msgstr "Nyanya"
+
+# ─── Crop categories ───
+msgid "Cereal"
+msgstr "Nafaka"
+
+msgid "Cereals"
+msgstr "Nafaka"
+
+msgid "Legume"
+msgstr "Mikunde"
+
+msgid "Legumes"
+msgstr "Mikunde"
+
+msgid "Root / tuber"
+msgstr "Mizizi na Vikande"
+
+msgid "Root / Tubers"
+msgstr "Mizizi na Vikande"
+
+msgid "Oilseed"
+msgstr "Mbegu za Mafuta"
+
+msgid "Oilseeds"
+msgstr "Mbegu za Mafuta"
+
+msgid "Vegetable"
+msgstr "Mboga"
+
+msgid "Cash crop"
+msgstr "Zao la Biashara"
+
+# ─── Month names ───
+msgid "January"
+msgstr "Januari"
+
+msgid "February"
+msgstr "Februari"
+
+msgid "March"
+msgstr "Machi"
+
+msgid "April"
+msgstr "Aprili"
+
+msgid "May"
+msgstr "Mei"
+
+msgid "June"
+msgstr "Juni"
+
+msgid "July"
+msgstr "Julai"
+
+msgid "August"
+msgstr "Agosti"
+
+msgid "September"
+msgstr "Septemba"
+
+msgid "October"
+msgstr "Oktoba"
+
+msgid "November"
+msgstr "Novemba"
+
+msgid "December"
+msgstr "Desemba"
+
+# ─── Crop library filter ───
+msgid "Plant:"
+msgstr "Panda:"
+
+# ─── Admin Panel ───
+msgid "Admin Panel"
+msgstr "Jopo la Msimamizi"
+
+msgid "Admin Control Panel"
+msgstr "Jopo la Udhibiti la Msimamizi"
+
+msgid "Admin"
+msgstr "Msimamizi"
+
+msgid "Manage users, rules, weather data sources, and monitor operational status."
+msgstr "Simamia watumiaji, sheria, vyanzo vya data ya hali ya hewa, na ufuatilie hali ya uendeshaji."
+
+msgid "System Operational"
+msgstr "Mfumo Unafanya Kazi"
+
+msgid "Registered Profiles"
+msgstr "Wasifu Waliosaijiliwa"
+
+msgid "Tracked Crop Entries"
+msgstr "Maingizo ya Mazao Yanayofuatiliwa"
+
+msgid "Active Weather Sources"
+msgstr "Vyanzo Amilifu vya Hali ya Hewa"
+
+msgid "Pending Notifications"
+msgstr "Arifa Zinazongojea"
+
+msgid "Manage Crops"
+msgstr "Simamia Mazao"
+
+msgid "Add, edit, delete crops & upload images"
+msgstr "Ongeza, hariri, futa mazao na pakia picha"
+
+msgid "Manage Users"
+msgstr "Simamia Watumiaji"
+
+msgid "View, edit, and manage farmer accounts"
+msgstr "Angalia, hariri, na simamia akaunti za wakulima"
+
+msgid "Advisory Rules"
+msgstr "Sheria za Ushauri"
+
+msgid "Configure planting and harvest rules"
+msgstr "Sanidi sheria za kupanda na kuvuna"
+
+msgid "Weather Sources"
+msgstr "Vyanzo vya Hali ya Hewa"
+
+msgid "Manage Open-Meteo and data providers"
+msgstr "Simamia Open-Meteo na watoa data"
+
+msgid "Advisory History"
+msgstr "Historia ya Ushauri"
+
+msgid "Review past alerts and notifications"
+msgstr "Kagua tahadhari na arifa za awali"
+
+msgid "Register Farmer"
+msgstr "Sajili Mkulima"
+
+msgid "Add offline farmers — they receive SMS advisories"
+msgstr "Ongeza wakulima bila mtandao — wanapokea ushauri kwa SMS"
+
+msgid "Broadcast SMS"
+msgstr "Tuma SMS kwa Wingi"
+
+msgid "Send a custom message to all farmers of a crop"
+msgstr "Tuma ujumbe maalum kwa wakulima wote wa zao"
+
+msgid "System Health"
+msgstr "Afya ya Mfumo"
+
+msgid "API Response"
+msgstr "Mwitikio wa API"
+
+msgid "Healthy"
+msgstr "Nzuri"
+
+msgid "%(n)s pending"
+msgstr "%(n)s inasubiri"
+
+msgid "Notification Queue"
+msgstr "Foleni ya Arifa"
+
+msgid "Active"
+msgstr "Amilifu"
+
+msgid "Weather Sync"
+msgstr "Usawazishaji wa Hali ya Hewa"
+
+msgid "Recent Notification Failures"
+msgstr "Kushindwa kwa Arifa za Hivi Karibuni"
+
+msgid "Delivery failed"
+msgstr "Utoaji umeshindwa"
+
+msgid "No failures logged. All systems healthy!"
+msgstr "Hakuna kushindwa kulikoandikwa. Mifumo yote ni nzuri!"
+
+msgid "Recent Admin Activity"
+msgstr "Shughuli za Hivi Karibuni za Msimamizi"
+
+msgid "No recent audit entries."
+msgstr "Hakuna maingizo ya ukaguzi ya hivi karibuni."
+
+# ─── Admin Crops ───
+msgid "Crop Library Management"
+msgstr "Usimamizi wa Maktaba ya Mazao"
+
+msgid "Add, edit, or delete crops. Upload a photo for each crop to show it in the library."
+msgstr "Ongeza, hariri, au futa mazao. Pakia picha kwa kila zao kuionyesha kwenye maktaba."
+
+msgid "Add New Crop"
+msgstr "Ongeza Zao Jipya"
+
+msgid "Fill in the fields and upload an image"
+msgstr "Jaza sehemu na upakia picha"
+
+msgid "Start month"
+msgstr "Mwezi wa kuanza"
+
+msgid "End month"
+msgstr "Mwezi wa kumalizia"
+
+msgid "Min temp (°C)"
+msgstr "Joto la chini (°C)"
+
+msgid "Max temp (°C)"
+msgstr "Joto la juu (°C)"
+
+msgid "JPEG or PNG. Shown in the crop library & detail page."
+msgstr "JPEG au PNG. Inaonyeshwa kwenye maktaba ya mazao na ukurasa wa maelezo."
+
+msgid "Click Edit to modify details or upload a new image"
+msgstr "Bonyeza Hariri kubadilisha maelezo au kupakia picha mpya"
+
+msgid "Edit"
+msgstr "Hariri"
+
+msgid "Delete"
+msgstr "Futa"
+
+msgid "No crops yet. Use the form to add the first one."
+msgstr "Hakuna mazao bado. Tumia fomu kuongeza ya kwanza."
+
+# ─── Admin Users ───
+msgid "Admin Users"
+msgstr "Watumiaji wa Msimamizi"
+
+msgid "Assign user roles for farmers, extension officers, and administrators."
+msgstr "Peana majukumu ya watumiaji kwa wakulima, maafisa wa ugani, na wasimamizi."
+
+msgid "Back to Panel"
+msgstr "Rudi Joponi"
+
+msgid "Search by username, email, or location..."
+msgstr "Tafuta kwa jina la mtumiaji, barua pepe, au mahali..."
+
+msgid "All Roles"
+msgstr "Majukumu Yote"
+
+msgid "User"
+msgstr "Mtumiaji"
+
+msgid "Current Role"
+msgstr "Jukumu la Sasa"
+
+msgid "Change Role"
+msgstr "Badilisha Jukumu"
+
+msgid "Action"
+msgstr "Kitendo"
+
+msgid "No email set"
+msgstr "Barua pepe haijawekwa"
+
+msgid "Extension Officer"
+msgstr "Afisa wa Ugani"
+
+msgid "Update"
+msgstr "Sasisha"
+
+msgid "No users found"
+msgstr "Hakuna watumiaji waliopatikana"
+
+msgid "No registered profiles match your current filters."
+msgstr "Hakuna wasifu waliosaijiliwa wanaolingana na vichujio vyako vya sasa."
+
+msgid "Showing <strong>%(count)s</strong> user"
+msgid_plural "Showing <strong>%(count)s</strong> users"
+msgstr[0] "Inaonyesha <strong>%(count)s</strong> mtumiaji"
+msgstr[1] "Inaonyesha <strong>%(count)s</strong> watumiaji"
+
+msgid "Farmers"
+msgstr "Wakulima"
+
+msgid "Officers"
+msgstr "Maafisa"
+
+msgid "Admins"
+msgstr "Wasimamizi"
+
+# ─── Admin Rules ───
+msgid "Back to Admin Panel"
+msgstr "Rudi Jopo la Msimamizi"
+
+msgid "Define thresholds and logic inputs used to generate alerts and recommendations."
+msgstr "Wainishe vipimo na ingizo za mantiki zinazotumika kutoa tahadhari na mapendekezo."
+
+msgid "Add or Update Rule"
+msgstr "Ongeza au Sasisha Sheria"
+
+msgid "Set a rule key, value, and active status"
+msgstr "Weka ufunguo wa sheria, thamani, na hali ya ufanisi"
+
+msgid "If a rule with the same key already exists, submitting this form will update its value and status instead of creating a duplicate."
+msgstr "Ikiwa sheria yenye ufunguo sawa tayari ipo, kuwasilisha fomu hii itasasisha thamani yake na hali badala ya kuunda nakala."
+
+msgid "Save Rule"
+msgstr "Hifadhi Sheria"
+
+msgid "Current Rules"
+msgstr "Sheria za Sasa"
+
+msgid "Active advisory configuration"
+msgstr "Usanidi amilifu wa ushauri"
+
+msgid "Inactive"
+msgstr "Haifanyi kazi"
+
+msgid "No rules configured yet"
+msgstr "Hakuna sheria zilizosanidiwa bado"
+
+msgid "Use the form to add your first advisory rule. Rules control alert thresholds and recommendation logic."
+msgstr "Tumia fomu kuongeza sheria yako ya kwanza ya ushauri. Sheria zinadhibiti vipimo vya tahadhari na mantiki ya mapendekezo."
+
+# ─── Admin Weather Sources ───
+msgid "Weather Data Sources"
+msgstr "Vyanzo vya Data ya Hali ya Hewa"
+
+msgid "Manage provider endpoints and choose which data sources are active."
+msgstr "Simamia mwisho wa mtoa huduma na uchague vyanzo vya data vilivyo amilifu."
+
+msgid "Add or Update Source"
+msgstr "Ongeza au Sasisha Chanzo"
+
+msgid "Configure a weather data provider endpoint"
+msgstr "Sanidi mwisho wa mtoa data ya hali ya hewa"
+
+msgid "Only one source can be marked as primary at a time. Setting a new primary will demote the current one. Ensure the base URL includes the full API endpoint path."
+msgstr "Chanzo kimoja tu kinaweza kuwekwa alama kama kikuu wakati mmoja. Kuweka kikuu kipya kutashusha cha sasa. Hakikisha URL ya msingi inajumuisha njia kamili ya mwisho wa API."
+
+msgid "Save Source"
+msgstr "Hifadhi Chanzo"
+
+msgid "Configured Sources"
+msgstr "Vyanzo Vilivyosanidiwa"
+
+msgid "Active weather data providers"
+msgstr "Watoa data amilifu wa hali ya hewa"
+
+msgid "Primary"
+msgstr "Kikuu"
+
+msgid "Secondary"
+msgstr "Cha Pili"
+
+msgid "Connected"
+msgstr "Imeunganishwa"
+
+msgid "Untested"
+msgstr "Haijajaribiwa"
+
+msgid "No sources configured"
+msgstr "Hakuna vyanzo vilivyosanidiwa"
+
+msgid "Add your first weather data provider using the form. Open-Meteo is a great free option to start with."
+msgstr "Ongeza mtoa data wako wa kwanza wa hali ya hewa kwa kutumia fomu. Open-Meteo ni chaguo zuri la bure la kuanzia."
+
+# ─── Admin Broadcast SMS ───
+msgid "Broadcast complete — %(name)s"
+msgstr "Utumaji umekamilika — %(name)s"
+
+msgid "Message sent to eligible farmers tracking this crop"
+msgstr "Ujumbe umetumwa kwa wakulima wanaostahili wanaofuatilia zao hili"
+
+msgid "Failed deliveries (%(n)s)"
+msgstr "Matumio yaliyoshindwa (%(n)s)"
+
+msgid "Send a custom advisory message to all farmers tracking a specific crop."
+msgstr "Tuma ujumbe maalum wa ushauri kwa wakulima wote wanaofuatilia zao maalum."
+
+msgid "Select Crop"
+msgstr "Chagua Zao"
+
+msgid "Select a crop to see how many farmers will receive this message."
+msgstr "Chagua zao kuona wakulima wangapi watapokea ujumbe huu."
+
+msgid "Send Broadcast"
+msgstr "Tuma kwa Wingi"
+
+msgid "Who receives this?"
+msgstr "Nani anapokea hii?"
+
+msgid "Only farmers who track the selected crop, have SMS enabled, and have a phone number registered. This is a manual broadcast — it is not subject to the daily advisory limit."
+msgstr "Wakulima tu wanaofuatilia zao lililochaguliwa, wana SMS imewezeshwa, na wana nambari ya simu iliyosajiliwa. Hii ni utumaji wa mkono — haizingatii kikomo cha ushauri wa kila siku."
+
+# ─── Admin Register Farmer ───
+msgid "Register Offline Farmer"
+msgstr "Sajili Mkulima Bila Mtandao"
+
+msgid "For farmers without a smartphone — they will receive advisories via SMS."
+msgstr "Kwa wakulima wasio na simu janja — watapokea ushauri kupitia SMS."
+
+msgid "Used as login ID and for SMS advisory delivery. Tanzania numbers only (6XX or 7XX)."
+msgstr "Inatumika kama kitambulisho cha kuingia na utoaji wa ushauri wa SMS. Nambari za Tanzania tu (6XX au 7XX)."
+
+msgid "Enter a village, ward, or town in Iringa Region. We'll look it up automatically."
+msgstr "Ingiza kijiji, kata, au mji katika Mkoa wa Iringa. Tutakitafuta kiotomatiki."
+
+msgid "A welcome SMS will be sent immediately after registration."
+msgstr "SMS ya karibu itatumwa mara moja baada ya usajili."
+
+# ─── Admin Advisory History ───
+msgid "Review generated recommendations for quality checks and support follow-up."
+msgstr "Kagua mapendekezo yaliyozalishwa kwa ukaguzi wa ubora na ufuatiliaji wa msaada."
+
+msgid "Total Records"
+msgstr "Jumla ya Rekodi"
+
+msgid "Info"
+msgstr "Habari"
+
+msgid "Warnings"
+msgstr "Maonyo"
+
+msgid "Search by user, crop, or notes..."
+msgstr "Tafuta kwa mtumiaji, zao, au maelezo..."
+
+msgid "All Severities"
+msgstr "Viwango Vyote vya Ukali"
+
+msgid "Warning"
+msgstr "Onyo"
+
+msgid "Success"
+msgstr "Mafanikio"
+
+msgid "Low"
+msgstr "Chini"
+
+msgid "Crop"
+msgstr "Zao"
+
+msgid "Severity"
+msgstr "Ukali"
+
+msgid "Generated"
+msgstr "Ilizalishwa"
+
+msgid "Weather Notes"
+msgstr "Maelezo ya Hali ya Hewa"
+
+msgid "Show more"
+msgstr "Onyesha zaidi"
+
+msgid "Showing <strong>%(count)s</strong> advisory record"
+msgid_plural "Showing <strong>%(count)s</strong> advisory records"
+msgstr[0] "Inaonyesha <strong>%(count)s</strong> rekodi ya ushauri"
+msgstr[1] "Inaonyesha <strong>%(count)s</strong> rekodi za ushauri"
+
+msgid "No advisory history yet"
+msgstr "Hakuna historia ya ushauri bado"
+
+msgid "Advisory records will appear here once the system generates recommendations for farmers based on weather data and crop calendars."
+msgstr "Rekodi za ushauri zitaonekana hapa mfumo ukizalisha mapendekezo kwa wakulima kulingana na data ya hali ya hewa na kalenda za mazao."
+
+# ─── Admin Crop Edit ───
+msgid "Edit %(name)s"
+msgstr "Hariri %(name)s"
+
+msgid "Edit Crop: %(name)s"
+msgstr "Hariri Zao: %(name)s"
+
+msgid "Update details or replace the crop image"
+msgstr "Sasisha maelezo au badilisha picha ya zao"
+
+msgid "Current image"
+msgstr "Picha ya sasa"
+
+msgid "Upload a new file below to replace it."
+msgstr "Pakia faili jipya hapa chini kuibadilisha."
+
+msgid "Planting window"
+msgstr "Wakati wa kupanda"
+
+msgid "Temperature limits"
+msgstr "Mipaka ya joto"
+
+msgid "Start month (1–12)"
+msgstr "Mwezi wa kuanza (1–12)"
+
+msgid "End month (1–12)"
+msgstr "Mwezi wa kumalizia (1–12)"
+
+msgid "Crop image"
+msgstr "Picha ya zao"
+
+msgid "Upload JPEG or PNG. Leave blank to keep the existing image."
+msgstr "Pakia JPEG au PNG. Acha wazi kudumisha picha iliyopo."
+
+# ─── Admin Rule Edit ───
+msgid "Edit Rule"
+msgstr "Hariri Sheria"
+
+msgid "Back to Rules"
+msgstr "Rudi kwa Sheria"
+
+msgid "Editing: <strong>%(name)s</strong>"
+msgstr "Unahariri: <strong>%(name)s</strong>"
+
+# ─── SMS Password Reset ───
+msgid "Forgot Password?"
+msgstr "Umesahau Nenosiri?"
+
+msgid "Forgot password?"
+msgstr "Umesahau nenosiri?"
+
+msgid "Enter the phone number you registered with. We'll send you a 6-digit verification code via SMS."
+msgstr "Ingiza nambari ya simu uliyosajili nayo. Tutakutumia nambari ya uthibitisho ya tarakimu 6 kupitia SMS."
+
+msgid "Send Verification Code"
+msgstr "Tuma Nambari ya Uthibitisho"
+
+msgid "Enter the number you used when you registered."
+msgstr "Ingiza nambari uliyotumia wakati wa usajili."
+
+msgid "Remember your password?"
+msgstr "Unakumbuka nenosiri lako?"
+
+msgid "Check Your SMS"
+msgstr "Angalia SMS Yako"
+
+msgid "We sent a 6-digit code to the number ending in <strong>%(hint)s</strong>. Enter it below along with your new password."
+msgstr "Tulituma nambari ya tarakimu 6 kwenye nambari inayoishia na <strong>%(hint)s</strong>. Iingize hapa chini pamoja na nenosiri lako jipya."
+
+msgid "Verification code"
+msgstr "Nambari ya uthibitisho"
+
+msgid "The code expires in 10 minutes."
+msgstr "Nambari inaisha muda baada ya dakika 10."
+
+msgid "New password"
+msgstr "Nenosiri jipya"
+
+msgid "Create a new password"
+msgstr "Tengeneza nenosiri jipya"
+
+msgid "Confirm new password"
+msgstr "Thibitisha nenosiri jipya"
+
+msgid "Repeat your new password"
+msgstr "Rudia nenosiri lako jipya"
+
+msgid "Use a different phone number"
+msgstr "Tumia nambari nyingine ya simu"
+
+msgid "Enter Verification Code"
+msgstr "Ingiza Nambari ya Uthibitisho"
+
+# ─── Broadcast SMS – Advisory Type ───
+msgid "Send a custom advisory message to farmers tracking a specific crop."
+msgstr "Tuma ujumbe wa ushauri maalum kwa wakulima wanaofuatilia zao maalum."
+
+msgid "Advisory Type"
+msgstr "Aina ya Ushauri"
+
+msgid "Choose which group of farmers should receive this message."
+msgstr "Chagua kundi la wakulima watakaopokea ujumbe huu."
+
+msgid "All Farmers"
+msgstr "Wakulima Wote"
+
+msgid "Plant Advisory"
+msgstr "Ushauri wa Kupanda"
+
+msgid "Harvest Advisory"
+msgstr "Ushauri wa Kuvuna"
+
+msgid "Sent to farmers interested in planting advisories"
+msgstr "Imetumwa kwa wakulima wanaopenda ushauri wa kupanda"
+
+msgid "Sent to farmers interested in harvest advisories"
+msgstr "Imetumwa kwa wakulima wanaopenda ushauri wa kuvuna"
+
+msgid "Sent to all eligible farmers tracking this crop"
+msgstr "Imetumwa kwa wakulima wote wanaostahili wanaofuatilia zao hili"
+
+msgid "Only farmers who track the selected crop, have SMS enabled, and have a registered phone number. Choosing 'Plant Advisory' targets farmers with a planting or 'both' preference; 'Harvest Advisory' targets harvest or 'both'. 'All Farmers' sends to everyone eligible regardless of preference."
+msgstr "Wakulima wanaofuatilia zao lililochaguliwa, wana SMS iliyowezeshwa, na nambari ya simu iliyosajiliwa. 'Ushauri wa Kupanda' unalenga wakulima wenye upendeleo wa kupanda au 'wote wawili'; 'Ushauri wa Kuvuna' unalenga kuvuna au 'wote wawili'. 'Wakulima Wote' hutuma kwa kila mtu anayestahili bila kujali upendeleo."
+
+# ─── SMS Language Preference UI ───
+msgid "SMS Language"
+msgstr "Lugha ya SMS"
+
+msgid "Choose the language for advisory SMS messages sent to your phone."
+msgstr "Chagua lugha kwa ujumbe wa ushauri wa SMS unaotumwa kwenye simu yako."
+
+# ─── Advisory SMS labels ───
+msgid "Recommendation"
+msgstr "Ushauri"
+
+# ─── Advisory content strings (advisory.py) ───
+msgid "This month falls within the typical planting window for your zone."
+msgstr "Mwezi huu uko ndani ya kipindi cha kawaida cha kupanda kwa eneo lako."
+
+msgid "Typical planting months for this crop in your zone do not include the current month (%(month)s). Check again closer to the season."
+msgstr "Miezi ya kawaida ya kupanda zao hili katika eneo lako haijumuishi mwezi wa sasa (%(month)s). Angalia tena karibu na msimu."
+
+msgid "This month is within the typical harvest period for this crop in your zone."
+msgstr "Mwezi huu uko ndani ya kipindi cha kawaida cha kuvuna zao hili katika eneo lako."
+
+msgid "Peak harvest months for this crop differ from the current month; this is a general calendar guide only."
+msgstr "Miezi ya kilele cha uvunaji wa zao hili inatofautiana na mwezi wa sasa; hii ni mwongozo wa kalenda tu."
+
+msgid "Next ~14 days include %(days)s day(s) with cold lows (frost risk possible); delay sensitive planting if unsure."
+msgstr "Siku ~14 zijazo zina %(days)s siku zenye baridi kali (hatari ya theluji inawezekana); kuchelewa kupanda mazao nyeti ikiwa una shaka."
+
+msgid "%(days)s hot day(s) forecast; ensure irrigation if planting or flowering."
+msgstr "%(days)s siku za joto zinatabiriwa; hakikisha umwagiliaji ikiwa unapanda au mazao yanachanua."
+
+msgid "Heavy rain possible on %(days)s day(s); consider soil drainage before planting."
+msgstr "Mvua kubwa inawezekana siku %(days)s; fikiria mifereji ya udongo kabla ya kupanda."
+
+msgid "Weather outlook shows repeated cold nights; treat as marginal."
+msgstr "Hali ya hewa inaonyesha usiku wa baridi mara kwa mara; ichukulie kama ya hatarini."
+
+msgid "Sustained heat in the forecast; irrigate and avoid heat-stress windows if possible."
+msgstr "Joto la kudumu linatabiriwa; mwagilia na epuka nyakati za msongo wa joto ikiwezekana."

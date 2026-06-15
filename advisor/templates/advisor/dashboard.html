@@ -1,0 +1,226 @@
+{% extends "advisor/base.html" %}
+{% load i18n advisor_extras %}
+{% block title %}{% trans "Dashboard" %} — FarmWise{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; flex-wrap:wrap; gap:16px;" class="animate-in">
+  <div>
+    <h1 style="font-family:var(--font-display); font-size:2rem; font-weight:800; color:var(--forest); letter-spacing:-0.02em; line-height:1.2;">
+      <span style="font-size:1.8rem; vertical-align:-3px; margin-right:8px;">👋</span> {% trans "Good" %} {{ greeting }}
+    </h1>
+    <p style="color:var(--gray-500); font-size:0.95rem; margin-top:4px;">
+      {% if profile.location_label %}
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px; margin-right:4px; color:var(--sage);"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        {{ profile.location_label }}
+      {% else %}
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px; margin-right:4px; color:var(--sage);"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        {{ profile.latitude }}, {{ profile.longitude }}
+      {% endif %}
+    </p>
+  </div>
+  <a class="btn btn-primary" href="{% url 'advisor:crop_library' %}">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    {% trans "Add Crop" %}
+  </a>
+</div>
+
+<!-- Weather & Stats Row -->
+<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; margin-bottom:28px;" class="animate-in animate-delay-1">
+  <!-- Weather Card -->
+  <div class="weather-widget" style="grid-column:span 1;">
+    <div style="position:relative; z-index:1;">
+      <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:16px;">
+        <div>
+          <div style="font-size:0.78rem; opacity:0.8; margin-bottom:2px;">Current Weather</div>
+          <div style="font-size:2.5rem; font-weight:800; line-height:1;">{{ current_temp }}</div>
+        </div>
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.2">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+      </div>
+      {% if weather_warning %}
+        <div style="display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,0.15); backdrop-filter:blur(8px); border-radius:var(--radius-full); padding:6px 14px; font-size:0.82rem; font-weight:600;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          {{ weather_warning }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div style="display:grid; grid-template-rows:1fr 1fr; gap:12px;">
+    <div class="stat-card">
+      <div class="stat-icon green">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2a10 10 0 0 0-7.5 16.5L12 22l7.5-3.5A10 10 0 0 0 12 2z"/><path d="M12 6v6l4 2"/></svg>
+      </div>
+      <div class="stat-info">
+        <h3>{{ rows|length }}</h3>
+        <p>{% trans "Tracked Crops" %}</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon amber">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      </div>
+      <div class="stat-info">
+        <h3>{% if profile.location_label %}{% trans "Set" %}{% else %}{% trans "Not Set" %}{% endif %}</h3>
+        <p>{% trans "Location" %}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions Card -->
+  <div class="card" style="display:flex; flex-direction:column; gap:12px; padding:20px;">
+    <div style="font-size:0.82rem; font-weight:600; color:var(--gray-500); margin-bottom:4px;">{% trans "Quick Actions" %}</div>
+    <a href="{% url 'advisor:crop_library' %}" class="btn btn-secondary btn-sm w-full" style="justify-content:flex-start;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 0 0-7.5 16.5L12 22l7.5-3.5A10 10 0 0 0 12 2z"/><path d="M12 6v6l4 2"/></svg>
+      {% trans "Browse Crops" %}
+    </a>
+    <a href="{% url 'advisor:onboarding' %}" class="btn btn-secondary btn-sm w-full" style="justify-content:flex-start;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      {% trans "Update Location" %}
+    </a>
+    <a href="{% url 'advisor:dashboard' %}" class="btn btn-ghost btn-sm w-full" style="justify-content:flex-start;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+      {% trans "Refresh Data" %}
+    </a>
+  </div>
+</div>
+
+<!-- Responsive override for mobile -->
+<style>
+  @media (max-width: 900px) {
+    div[style*="grid-template-columns:1fr 1fr 1fr"] {
+      grid-template-columns: 1fr !important;
+    }
+  }
+  @media (min-width: 901px) and (max-width: 1100px) {
+    div[style*="grid-template-columns:1fr 1fr 1fr"] {
+      grid-template-columns: 1fr 1fr !important;
+    }
+  }
+</style>
+
+<!-- Tracked Crops Section -->
+<div class="animate-in animate-delay-2">
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+    <h2 style="font-size:1.3rem; font-weight:700; color:var(--gray-800);">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--emerald)" stroke-width="2" style="vertical-align:-3px; margin-right:6px;"><path d="M12 2a10 10 0 0 0-7.5 16.5L12 22l7.5-3.5A10 10 0 0 0 12 2z"/><path d="M12 6v6l4 2"/></svg>
+      {% trans "My Crops" %}
+    </h2>
+  </div>
+
+  {% if not rows %}
+    <!-- Empty State -->
+    <div class="card" style="padding:0; overflow:hidden;">
+      <div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:80px; height:80px; color:var(--gray-300); margin:0 auto 20px;">
+          <path d="M12 2a10 10 0 0 0-7.5 16.5L12 22l7.5-3.5A10 10 0 0 0 12 2z"/>
+          <path d="M12 6v6l4 2"/>
+          <line x1="8" y1="2" x2="8" y2="4"/><line x1="16" y1="2" x2="16" y2="4"/>
+        </svg>
+        <h3>{% trans "No crops tracked yet" %}</h3>
+        <p>{% trans "Start by adding crops from the library. We'll provide personalized planting and harvest timing guidance for each one." %}</p>
+        <a class="btn btn-primary" href="{% url 'advisor:crop_library' %}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          {% trans "Browse Crop Library" %}
+        </a>
+      </div>
+    </div>
+  {% else %}
+    <div class="grid" style="grid-template-columns:repeat(auto-fill, minmax(340px, 1fr)); gap:20px;">
+      {% for row in rows %}
+      <div class="card card-hover" style="padding:0; overflow:hidden;">
+        {% if row.farmer_crop.crop.image %}
+          <img src="{{ row.farmer_crop.crop.image.url }}" alt="{{ row.farmer_crop.crop.name }}"
+               style="width:100%; height:140px; object-fit:cover; display:block;">
+        {% else %}
+          <div style="height:6px; background:linear-gradient(to right, var(--forest), var(--sage));"></div>
+        {% endif %}
+        <div style="padding:24px;">
+          <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:16px;">
+            <div>
+              <h3 style="font-size:1.15rem; font-weight:700;">
+                <a href="{% url 'advisor:crop_detail' row.farmer_crop.crop.slug %}" style="color:var(--gray-800);">{% trans row.farmer_crop.crop.name %}</a>
+              </h3>
+              <div style="display:flex; align-items:center; gap:6px; margin-top:4px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gray-400)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <span style="font-size:0.78rem; color:var(--gray-400);">{{ row.farmer_crop.crop.growing_zone.name }}</span>
+                <span style="color:var(--gray-300);">·</span>
+                <span style="font-size:0.78rem; color:var(--gray-400);">{% trans row.farmer_crop.crop.category %}</span>
+              </div>
+            </div>
+            <a href="{% url 'advisor:crop_detail' row.farmer_crop.crop.slug %}" class="btn btn-icon btn-ghost" style="width:36px; height:36px; flex-shrink:0;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </a>
+          </div>
+
+          <!-- Advisory Items -->
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            {% if advisory_preference != "harvest" %}
+            <div class="advisory-item" style="padding:0;">
+              <div class="advisory-dot plant"></div>
+              <div>
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:2px;">
+                  <span class="badge badge-success" style="font-size:0.72rem;">{% trans row.advisory.planting_status %}</span>
+                  <span style="font-size:0.78rem; color:var(--gray-500);">{% trans "Planting" %}</span>
+                </div>
+                <p style="font-size:0.88rem; color:var(--gray-700); line-height:1.5;">{{ row.advisory.planting_detail }}</p>
+              </div>
+            </div>
+            {% endif %}
+            {% if advisory_preference != "planting" %}
+            <div class="advisory-item" style="padding:0;">
+              <div class="advisory-dot harvest"></div>
+              <div>
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:2px;">
+                  <span class="badge badge-warn" style="font-size:0.72rem;">{% trans row.advisory.harvest_status %}</span>
+                  <span style="font-size:0.78rem; color:var(--gray-500);">{% trans "Harvest" %}</span>
+                </div>
+                <p style="font-size:0.88rem; color:var(--gray-700); line-height:1.5;">{{ row.advisory.harvest_detail }}</p>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+
+          {% if row.advisory.weather_notes %}
+          <div class="divider" style="margin:16px 0;"></div>
+          <div style="display:flex; align-items:flex-start; gap:10px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gray-400)" stroke-width="2" style="flex-shrink:0; margin-top:2px;"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+            <p style="font-size:0.82rem; color:var(--gray-500); line-height:1.5;">{{ row.advisory.weather_notes }}</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+
+<div class="mt-4 animate-in animate-delay-3">
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <h3 style="font-size:1.05rem;color:var(--gray-800);">{% trans "Recent Advisory History" %}</h3>
+      <a href="{% url 'advisor:notification_preferences' %}" class="btn btn-ghost btn-sm">{% trans "Alert Settings" %}</a>
+    </div>
+    {% if advisory_history %}
+      <div style="display:grid;gap:10px;">
+        {% for item in advisory_history %}
+          <div style="padding:12px;border:1px solid var(--gray-200);border-radius:var(--radius-md);">
+            <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+              <strong>{% trans item.crop.name %}</strong>
+              <span class="muted">{{ item.generated_at|date:"Y-m-d H:i" }}</span>
+            </div>
+            <div class="muted">{% trans item.planting_status %} / {% trans item.harvest_status %}</div>
+            <div style="font-size:0.9rem;">{{ item.weather_notes|default:item.planting_detail|truncatechars:180 }}</div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="muted">{% trans "No advisory history yet." %}</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

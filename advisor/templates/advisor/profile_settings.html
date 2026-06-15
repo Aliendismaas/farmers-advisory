@@ -1,0 +1,111 @@
+{% extends "advisor/base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Profile Settings" %} — FarmWise{% endblock %}
+
+{% block content %}
+<div class="animate-in" style="max-width:640px; margin:0 auto;">
+
+  <!-- Header -->
+  <div style="margin-bottom:28px;">
+    <a href="{% url 'advisor:dashboard' %}" style="display:inline-flex; align-items:center; gap:6px; color:var(--gray-500); font-size:0.88rem; text-decoration:none; margin-bottom:16px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      {% trans "Back to Dashboard" %}
+    </a>
+    <h1 style="font-size:1.8rem; font-weight:800; color:var(--gray-900); letter-spacing:-0.02em;">{% trans "Profile Settings" %}</h1>
+    <p style="color:var(--gray-500); margin-top:6px;">{% trans "Update your contact details and login phone number." %}</p>
+  </div>
+
+  {% if messages %}
+    {% for msg in messages %}
+      <div class="form-{% if msg.tags == 'error' %}errors{% else %}success{% endif %}" style="margin-bottom:20px;">
+        {{ msg }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- Account info card -->
+  <div class="card" style="margin-bottom:20px; padding:20px 24px;">
+    <div style="display:flex; align-items:center; gap:16px;">
+      <div style="width:56px; height:56px; border-radius:50%; background:linear-gradient(135deg, var(--forest), var(--sage)); display:flex; align-items:center; justify-content:center; font-size:1.4rem; font-weight:800; color:white; flex-shrink:0;">
+        {{ request.user.username|slice:":2"|upper }}
+      </div>
+      <div>
+        <div style="font-weight:700; font-size:1.05rem; color:var(--gray-900);">{{ request.user.username }}</div>
+        <div style="font-size:0.82rem; color:var(--gray-400); margin-top:2px;">
+          {% trans "Role" %}: <span style="color:var(--forest); font-weight:600;">{{ profile.role|title }}</span>
+          &nbsp;·&nbsp;
+          {% trans "Location" %}: <span style="color:var(--gray-600);">{% if profile.location_label %}{{ profile.location_label|truncatechars:40 }}{% else %}{% trans "Not set" %}{% endif %}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings form -->
+  <div class="card">
+    <h2 style="font-size:1.1rem; font-weight:700; color:var(--gray-800); margin-bottom:20px; padding-bottom:14px; border-bottom:1px solid var(--gray-200);">
+      {% trans "Contact Details" %}
+    </h2>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="form-errors" style="margin-bottom:16px;">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      <div class="form-group">
+        <label for="{{ form.phone.id_for_label }}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px; margin-right:4px;"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          {% trans "Phone number" %} <span style="color:var(--red, #e74c3c); font-size:0.8rem; font-weight:400;">({% trans "login identifier" %})</span>
+        </label>
+        {% if form.phone.errors %}
+          <div class="field-errors">{{ form.phone.errors }}</div>
+        {% endif %}
+        <div class="phone-prefix-wrap{% if form.phone.errors %} input-error{% endif %}">
+          <span class="phone-prefix">+255</span>
+          <input type="tel" name="phone" id="{{ form.phone.id_for_label }}"
+            placeholder="712 345 678" inputmode="numeric" maxlength="9"
+            value="{{ form.phone.value|default:''|slice:'3:' }}">
+        </div>
+        <small style="color:var(--gray-400); font-size:0.78rem;">{% trans "Changing this updates your login phone number." %}</small>
+      </div>
+
+      <div style="display:flex; gap:12px; margin-top:24px; flex-wrap:wrap;">
+        <button type="submit" class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          {% trans "Save Changes" %}
+        </button>
+        <a href="{% url 'advisor:dashboard' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+      </div>
+    </form>
+  </div>
+
+  <!-- Update location link -->
+  <div class="card" style="margin-top:20px; padding:20px 24px;">
+    <h2 style="font-size:1.05rem; font-weight:700; color:var(--gray-800); margin-bottom:8px;">{% trans "Farm Location" %}</h2>
+    <p style="color:var(--gray-500); font-size:0.9rem; margin-bottom:16px;">
+      {% if profile.location_label %}
+        {% trans "Currently set to" %}: <strong>{{ profile.location_label }}</strong>
+      {% else %}
+        {% trans "No location set yet." %}
+      {% endif %}
+    </p>
+    <a href="{% url 'advisor:onboarding' %}" class="btn btn-secondary btn-sm">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      {% trans "Update Farm Location" %}
+    </a>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.querySelector('form').addEventListener('submit', function() {
+    var phoneInput = document.querySelector('input[name="phone"]');
+    if (phoneInput && phoneInput.value) {
+      phoneInput.value = '255' + phoneInput.value.replace(/\D/g, '');
+    }
+  });
+</script>
+{% endblock %}

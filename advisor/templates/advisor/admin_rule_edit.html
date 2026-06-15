@@ -1,0 +1,49 @@
+{% extends "advisor/base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Edit Rule" %} — FarmWise Admin{% endblock %}
+
+{% block content %}
+<div class="animate-in" style="max-width:600px; margin:0 auto;">
+
+  <div style="margin-bottom:24px;">
+    <a href="{% url 'advisor:admin_rules' %}" style="display:inline-flex; align-items:center; gap:6px; color:var(--gray-500); font-size:0.88rem; text-decoration:none; margin-bottom:12px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      {% trans "Back to Rules" %}
+    </a>
+    <h1 style="font-size:1.6rem; font-weight:800; color:var(--gray-900); letter-spacing:-0.02em;">{% trans "Edit Rule" %}</h1>
+    <p style="color:var(--gray-500); margin-top:6px; font-size:0.9rem;">{% blocktrans with name=rule.name %}Editing: <strong>{{ name }}</strong>{% endblocktrans %}</p>
+  </div>
+
+  <div class="card">
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="form-errors" style="margin-bottom:16px;">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      {% for field in form %}
+        <div class="form-group">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {% if field.errors %}
+            <div class="field-errors">{{ field.errors }}</div>
+          {% endif %}
+          {{ field }}
+          {% if field.help_text %}
+            <small style="color:var(--gray-400); font-size:0.78rem;">{{ field.help_text }}</small>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <div style="display:flex; gap:12px; margin-top:24px; flex-wrap:wrap;">
+        <button type="submit" class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          {% trans "Save Rule" %}
+        </button>
+        <a href="{% url 'advisor:admin_rules' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+      </div>
+    </form>
+  </div>
+
+</div>
+{% endblock %}

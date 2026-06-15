@@ -1,0 +1,245 @@
+{% extends "advisor/base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Register Farmer" %} — FarmWise{% endblock %}
+
+{% block extra_css %}
+<style>
+  .reg-layout {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .form-panel {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(27,67,50,0.06);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+
+  .form-panel-header {
+    padding: 24px 28px 20px;
+    border-bottom: 1px solid var(--gray-100);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .form-panel-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, var(--forest), var(--sage));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: var(--shadow-green);
+  }
+
+  .form-panel-body {
+    padding: 28px;
+  }
+
+  .field-group {
+    margin-bottom: 22px;
+  }
+
+  .field-group label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--gray-700);
+    margin-bottom: 7px;
+  }
+
+  .field-group input[type="text"] {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    font-size: 0.92rem;
+    color: var(--gray-800);
+    background: var(--white);
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+  }
+
+  .field-group input[type="text"]:focus {
+    outline: none;
+    border-color: var(--sage);
+    box-shadow: 0 0 0 3px rgba(82,183,136,0.12);
+  }
+
+  .field-error {
+    color: #DC2626;
+    font-size: 0.8rem;
+    margin-top: 5px;
+  }
+
+  .crops-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  .crop-checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 14px;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.88rem;
+    color: var(--gray-700);
+  }
+
+  .crop-checkbox-item:has(input:checked) {
+    border-color: var(--sage);
+    background: var(--pale);
+    color: var(--forest);
+    font-weight: 600;
+  }
+
+  .crop-checkbox-item input[type="checkbox"] {
+    accent-color: var(--sage);
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--gray-500);
+    font-size: 0.85rem;
+    text-decoration: none;
+    margin-bottom: 24px;
+    transition: color 0.2s;
+  }
+
+  .back-link:hover { color: var(--forest); }
+
+  .hint-text {
+    font-size: 0.8rem;
+    color: var(--gray-400);
+    margin-top: 5px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="reg-layout animate-in">
+
+  <a href="{% url 'advisor:admin_panel' %}" class="back-link">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    {% trans "Back to Admin Panel" %}
+  </a>
+
+  <div class="form-panel">
+    <div class="form-panel-header">
+      <div class="form-panel-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <line x1="19" y1="8" x2="19" y2="14"/>
+          <line x1="22" y1="11" x2="16" y2="11"/>
+        </svg>
+      </div>
+      <div>
+        <h1 style="font-size:1.15rem; font-weight:700; color:var(--gray-800); margin:0 0 3px;">{% trans "Register Offline Farmer" %}</h1>
+        <p style="font-size:0.82rem; color:var(--gray-500); margin:0;">{% trans "For farmers without a smartphone — they will receive advisories via SMS." %}</p>
+      </div>
+    </div>
+
+    <div class="form-panel-body">
+      {% if messages %}
+        {% for msg in messages %}
+          <div class="alert alert-{{ msg.tags }}" style="margin-bottom:20px;">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <form method="post" novalidate>
+        {% csrf_token %}
+
+        <!-- Full Name -->
+        <div class="field-group">
+          <label for="id_full_name">{{ form.full_name.label }}</label>
+          {{ form.full_name }}
+          {% if form.full_name.errors %}
+            <div class="field-error">{{ form.full_name.errors.0 }}</div>
+          {% endif %}
+        </div>
+
+        <!-- Phone -->
+        <div class="field-group">
+          <label for="id_phone">{{ form.phone.label }}</label>
+          <div style="display:flex; align-items:stretch; border:1px solid var(--gray-200); border-radius:var(--radius-md); overflow:hidden; transition:box-shadow 0.2s;">
+            <span style="display:flex; align-items:center; padding:10px 14px; background:var(--gray-50, #f9fafb); color:var(--gray-600); font-weight:600; font-size:0.92rem; border-right:1px solid var(--gray-200); white-space:nowrap; user-select:none;">+255</span>
+            <input type="tel" name="phone" id="id_phone"
+              placeholder="712 345 678" inputmode="numeric" maxlength="9"
+              style="border:none; flex:1; padding:10px 14px; font-size:0.92rem; color:var(--gray-800); background:var(--white); outline:none;">
+          </div>
+          <p class="hint-text">{% trans "Used as login ID and for SMS advisory delivery. Tanzania numbers only (6XX or 7XX)." %}</p>
+          {% if form.phone.errors %}
+            <div class="field-error">{{ form.phone.errors.0 }}</div>
+          {% endif %}
+        </div>
+
+        <!-- Location -->
+        <div class="field-group">
+          <label for="id_location_query">{{ form.location_query.label }}</label>
+          {{ form.location_query }}
+          <p class="hint-text">{% trans "Enter a village, ward, or town in Iringa Region. We'll look it up automatically." %}</p>
+          {% if form.location_query.errors %}
+            <div class="field-error">{{ form.location_query.errors.0 }}</div>
+          {% endif %}
+        </div>
+
+        <!-- Crops -->
+        <div class="field-group">
+          <label>{{ form.crops.label }}</label>
+          <div class="crops-grid">
+            {% for choice in form.crops %}
+              <label class="crop-checkbox-item">
+                {{ choice.tag }}
+                {{ choice.choice_label }}
+              </label>
+            {% endfor %}
+          </div>
+          {% if form.crops.errors %}
+            <div class="field-error">{{ form.crops.errors.0 }}</div>
+          {% endif %}
+        </div>
+
+        <div style="padding-top:8px; border-top:1px solid var(--gray-100); margin-top:8px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+          <p style="font-size:0.8rem; color:var(--gray-400); margin:0;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px; margin-right:3px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.99 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.92 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            {% trans "A welcome SMS will be sent immediately after registration." %}
+          </p>
+          <button type="submit" class="btn btn-primary" style="display:inline-flex; align-items:center; gap:8px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+            {% trans "Register Farmer" %}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.querySelector('form').addEventListener('submit', function() {
+    var phoneInput = document.querySelector('input[name="phone"]');
+    if (phoneInput && phoneInput.value) {
+      phoneInput.value = '255' + phoneInput.value.replace(/\D/g, '');
+    }
+  });
+</script>
+{% endblock %}

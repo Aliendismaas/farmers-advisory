@@ -1,0 +1,257 @@
+{% extends "advisor/base.html" %}
+{% load i18n %}
+{% block title %}FarmWise — {% trans "Iringa Region Farming Advisor" %}{% endblock %}
+
+{% block content %}
+<!-- ═══════════════════════════════════════════════════
+     HERO SECTION
+     ═══════════════════════════════════════════════════ -->
+<section class="hero" style="margin:-32px -24px 0; padding:100px 24px;">
+  <div style="max-width:1280px; margin:0 auto;">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center;">
+      <!-- Hero Text -->
+      <div class="animate-in">
+        <div style="display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.12); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.2); border-radius:var(--radius-full); padding:6px 16px; margin-bottom:24px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--sage-light);">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+          </svg>
+          <span style="font-size:0.85rem; font-weight:500; color:rgba(255,255,255,0.9);">{% trans "Built for Iringa Region Farmers" %}</span>
+        </div>
+        <h1 style="font-family:var(--font-display); font-size:3.5rem; font-weight:800; line-height:1.1; letter-spacing:-0.03em; margin-bottom:20px;">
+          {% trans "Grow Smarter," %}<br>
+          <span style="background:linear-gradient(135deg, var(--sage-light), var(--mint)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">{% trans "Harvest Better" %}</span>
+        </h1>
+        <p style="font-size:1.15rem; line-height:1.7; opacity:0.85; max-width:480px; margin-bottom:36px;">
+          {% trans "A free advisory tool for farmers in Iringa Region, Tanzania. Register your location, pick the crops you grow — Maize, Irish Potatoes, Onions, Avocado, Wheat, and more — and receive planting and harvest guidance matched to Iringa's highland seasons." %}
+        </p>
+        <div style="display:flex; gap:14px; flex-wrap:wrap;">
+          <a class="btn btn-lg" href="{% url 'advisor:register' %}" style="background:var(--white); color:var(--forest); box-shadow:0 4px 20px rgba(0,0,0,0.15);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            {% trans "Get Started Free" %}
+          </a>
+          <a class="btn btn-lg" href="{% url 'advisor:login' %}" style="background:rgba(255,255,255,0.12); color:var(--white); border:2px solid rgba(255,255,255,0.25); backdrop-filter:blur(10px);">
+            {% trans "Sign In" %}
+          </a>
+        </div>
+        <!-- Social Proof -->
+        <div style="display:flex; align-items:center; gap:16px; margin-top:40px; padding-top:28px; border-top:1px solid rgba(255,255,255,0.12);">
+          <div style="display:flex;">
+            <div style="width:36px;height:36px;border-radius:50%;background:var(--sage);border:2px solid var(--forest);display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:white;">JK</div>
+            <div style="width:36px;height:36px;border-radius:50%;background:var(--amber);border:2px solid var(--forest);display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:white;margin-left:-10px;">AM</div>
+            <div style="width:36px;height:36px;border-radius:50%;background:var(--blue);border:2px solid var(--forest);display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:white;margin-left:-10px;">TS</div>
+          </div>
+          <div>
+            <div style="font-size:0.85rem; font-weight:600; color:rgba(255,255,255,0.95);">{% trans "Serving Iringa Region farmers" %}</div>
+            <div style="font-size:0.78rem; color:rgba(255,255,255,0.6);">{% trans "Iringa Region, Tanzania" %}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Visual -->
+      <div class="animate-in animate-delay-2" style="position:relative;">
+        <!-- Main Card -->
+        <div style="background:rgba(255,255,255,0.1); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.2); border-radius:var(--radius-xl); padding:32px; position:relative;">
+          <!-- Mini Dashboard Preview -->
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px;">
+            <div>
+              <div style="font-size:0.82rem; opacity:0.7; margin-bottom:4px;">{% trans "Good Morning, Farmer" %}</div>
+              <div style="font-size:1.3rem; font-weight:700;">{% trans "Your Farm Overview" %}</div>
+            </div>
+            <div style="width:44px; height:44px; background:rgba(255,255,255,0.15); border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+            </div>
+          </div>
+          <!-- Weather Mini -->
+          <div style="background:linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05)); border-radius:var(--radius-md); padding:18px; margin-bottom:18px; border:1px solid rgba(255,255,255,0.1);">
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+              <div>
+                <div style="font-size:0.78rem; opacity:0.7;">{% trans "Current Weather" %}</div>
+                <div style="font-size:2rem; font-weight:800; line-height:1.2;">24°C</div>
+                <div style="font-size:0.82rem; opacity:0.7;">{% trans "Partly Cloudy" %}</div>
+              </div>
+              <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5">
+                <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+              </svg>
+            </div>
+          </div>
+          <!-- Crop Status Mini -->
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div style="background:rgba(255,255,255,0.08); border-radius:var(--radius-md); padding:14px; border:1px solid rgba(255,255,255,0.08);">
+              <div style="font-size:0.72rem; opacity:0.6; margin-bottom:4px;">{% trans "Active Crops" %}</div>
+              <div style="font-size:1.5rem; font-weight:800;">5</div>
+              <div style="font-size:0.72rem; color:var(--sage-light);">{% trans "+2 this month" %}</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.08); border-radius:var(--radius-md); padding:14px; border:1px solid rgba(255,255,255,0.08);">
+              <div style="font-size:0.72rem; opacity:0.6; margin-bottom:4px;">{% trans "Harvest Ready" %}</div>
+              <div style="font-size:1.5rem; font-weight:800;">2</div>
+              <div style="font-size:0.72rem; color:var(--amber);">{% trans "Within 2 weeks" %}</div>
+            </div>
+          </div>
+        </div>
+        <!-- Floating Badge -->
+        <div style="position:absolute; top:-16px; right:-16px; background:var(--white); color:var(--forest); border-radius:var(--radius-lg); padding:12px 18px; box-shadow:var(--shadow-xl); display:flex; align-items:center; gap:10px; animation: float 3s ease-in-out infinite;">
+          <div style="width:32px; height:32px; background:var(--pale); border-radius:50%; display:flex; align-items:center; justify-content:center;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <div>
+            <div style="font-size:0.72rem; color:var(--gray-500);">{% trans "Advisory" %}</div>
+            <div style="font-size:0.85rem; font-weight:700; color:var(--forest);">{% trans "Plant Now!" %}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  @media (max-width: 768px) {
+    .hero > div > div { grid-template-columns: 1fr !important; gap: 40px !important; }
+    .hero h1 { font-size: 2.5rem !important; }
+  }
+</style>
+
+<!-- ═══════════════════════════════════════════════════
+     FEATURES SECTION
+     ═══════════════════════════════════════════════════ -->
+<section style="padding:80px 0;">
+  <div style="text-align:center; margin-bottom:56px;" class="animate-in">
+    <div style="display:inline-flex; align-items:center; gap:8px; background:var(--pale); border-radius:var(--radius-full); padding:6px 16px; margin-bottom:16px;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--emerald)" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      <span style="font-size:0.82rem; font-weight:600; color:var(--forest);">{% trans "Why FarmWise" %}</span>
+    </div>
+    <h2 style="font-family:var(--font-display); font-size:2.2rem; font-weight:800; color:var(--forest); letter-spacing:-0.02em; margin-bottom:12px;">
+      {% trans "Everything You Need to Farm Smarter" %}
+    </h2>
+    <p style="color:var(--gray-500); font-size:1.05rem; max-width:560px; margin:0 auto;">
+      {% trans "Powerful tools and real-time data to help you make the best decisions for your farm, from planting to harvest." %}
+    </p>
+  </div>
+
+  <div class="grid grid-3" style="gap:28px;">
+    <!-- Feature 1 -->
+    <div class="card card-hover animate-in animate-delay-1" style="padding:32px;">
+      <div class="feature-icon" style="background:var(--pale); color:var(--forest);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      </div>
+      <h3 style="font-size:1.15rem; font-weight:700; color:var(--gray-800); margin-bottom:8px;">{% trans "Location-Based Forecasts" %}</h3>
+      <p style="color:var(--gray-500); font-size:0.92rem; line-height:1.7;">{% trans "Set your farm location within Iringa Region and receive accurate, hyper-local weather data powered by Open-Meteo — tuned to Iringa's highland elevation and unimodal rainfall season." %}</p>
+    </div>
+    <!-- Feature 2 -->
+    <div class="card card-hover animate-in animate-delay-2" style="padding:32px;">
+      <div class="feature-icon" style="background:var(--amber-light); color:#92400E;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      </div>
+      <h3 style="font-size:1.15rem; font-weight:700; color:var(--gray-800); margin-bottom:8px;">{% trans "Weather-Smart Advisories" %}</h3>
+      <p style="color:var(--gray-500); font-size:0.92rem; line-height:1.7;">{% trans "Receive timely warnings about extreme weather, frost risk, and optimal planting windows. Never get caught off guard by unpredictable conditions again." %}</p>
+    </div>
+    <!-- Feature 3 -->
+    <div class="card card-hover animate-in animate-delay-3" style="padding:32px;">
+      <div class="feature-icon" style="background:#D1FAE5; color:#065F46;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 0 0-7.5 16.5L12 22l7.5-3.5A10 10 0 0 0 12 2z"/><path d="M12 6v6l4 2"/></svg>
+      </div>
+      <h3 style="font-size:1.15rem; font-weight:700; color:var(--gray-800); margin-bottom:8px;">{% trans "Regional Crop Calendar" %}</h3>
+      <p style="color:var(--gray-500); font-size:0.92rem; line-height:1.7;">{% trans "Browse a curated library of crops grown in Iringa Region — Maize, Wheat, Irish Potatoes, Onions, Avocado, Common Beans, Sunflower, Tomatoes, and more — with planting and harvest windows matched to Iringa's long-rains season (November–April)." %}</p>
+    </div>
+    <!-- Feature 4 -->
+    <div class="card card-hover animate-in animate-delay-1" style="padding:32px;">
+      <div class="feature-icon" style="background:var(--blue-light); color:#1E40AF;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <h3 style="font-size:1.15rem; font-weight:700; color:var(--gray-800); margin-bottom:8px;">{% trans "Track Your Crops" %}</h3>
+      <p style="color:var(--gray-500); font-size:0.92rem; line-height:1.7;">{% trans "Build your personal crop list and monitor planting and harvest statuses at a glance. Keep your farm organized and always know what needs attention next." %}</p>
+    </div>
+    <!-- Feature 5 -->
+    <div class="card card-hover animate-in animate-delay-2" style="padding:32px;">
+      <div class="feature-icon" style="background:var(--orange-light); color:#9A3412;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <h3 style="font-size:1.15rem; font-weight:700; color:var(--gray-800); margin-bottom:8px;">{% trans "Early Warnings" %}</h3>
+      <p style="color:var(--gray-500); font-size:0.92rem; line-height:1.7;">{% trans "Get proactive alerts for weather events that could affect your crops. Stay ahead of storms, droughts, and temperature extremes with advance notice." %}</p>
+    </div>
+    <!-- Feature 6 -->
+    <div class="card card-hover animate-in animate-delay-3" style="padding:32px;">
+      <div class="feature-icon" style="background:#FCE7F3; color:#9D174D;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+      </div>
+      <h3 style="font-size:1.15rem; font-weight:700; color:var(--gray-800); margin-bottom:8px;">{% trans "Simple Dashboard" %}</h3>
+      <p style="color:var(--gray-500); font-size:0.92rem; line-height:1.7;">{% trans "Everything at a glance. Your dashboard shows weather, crop statuses, and advisories in one clean view. No complicated menus, just the information you need." %}</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     HOW IT WORKS SECTION
+     ═══════════════════════════════════════════════════ -->
+<section style="padding:60px 0 80px; background:var(--white); margin:0 -24px; padding-left:24px; padding-right:24px;">
+  <div style="text-align:center; margin-bottom:48px;" class="animate-in">
+    <div style="display:inline-flex; align-items:center; gap:8px; background:var(--blue-light); border-radius:var(--radius-full); padding:6px 16px; margin-bottom:16px;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1E40AF" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span style="font-size:0.82rem; font-weight:600; color:#1E40AF;">{% trans "Quick Setup" %}</span>
+    </div>
+    <h2 style="font-family:var(--font-display); font-size:2.2rem; font-weight:800; color:var(--forest); letter-spacing:-0.02em; margin-bottom:12px;">
+      {% trans "Up and Running in 3 Steps" %}
+    </h2>
+    <p style="color:var(--gray-500); font-size:1.05rem; max-width:480px; margin:0 auto;">
+      {% trans "From sign-up to personalized advisories in under two minutes." %}
+    </p>
+  </div>
+
+  <div style="max-width:800px; margin:0 auto;">
+    <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:32px;">
+      <!-- Step 1 -->
+      <div class="animate-in animate-delay-1" style="text-align:center;">
+        <div style="width:72px; height:72px; background:linear-gradient(135deg, var(--forest), var(--sage)); border-radius:var(--radius-lg); display:flex; align-items:center; justify-content:center; margin:0 auto 20px; box-shadow:var(--shadow-green); position:relative;">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+          <div style="position:absolute; top:-8px; right:-8px; width:26px; height:26px; background:var(--amber); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:800; color:white; border:3px solid var(--white);">1</div>
+        </div>
+        <h3 style="font-size:1.05rem; font-weight:700; color:var(--gray-800); margin-bottom:6px;">{% trans "Create Your Account" %}</h3>
+        <p style="font-size:0.88rem; color:var(--gray-500); line-height:1.6;">{% trans "Sign up in seconds with just a username and password. No email verification required." %}</p>
+      </div>
+      <!-- Step 2 -->
+      <div class="animate-in animate-delay-2" style="text-align:center;">
+        <div style="width:72px; height:72px; background:linear-gradient(135deg, var(--emerald), var(--sage-light)); border-radius:var(--radius-lg); display:flex; align-items:center; justify-content:center; margin:0 auto 20px; box-shadow:0 4px 14px rgba(82,183,136,0.25); position:relative;">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <div style="position:absolute; top:-8px; right:-8px; width:26px; height:26px; background:var(--amber); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:800; color:white; border:3px solid var(--white);">2</div>
+        </div>
+        <h3 style="font-size:1.05rem; font-weight:700; color:var(--gray-800); margin-bottom:6px;">{% trans "Set Your Location" %}</h3>
+        <p style="font-size:0.88rem; color:var(--gray-500); line-height:1.6;">{% trans "Search for your village, ward, or town within Iringa Region. We connect to local weather data for your exact farm location instantly." %}</p>
+      </div>
+      <!-- Step 3 -->
+      <div class="animate-in animate-delay-3" style="text-align:center;">
+        <div style="width:72px; height:72px; background:linear-gradient(135deg, var(--sage), var(--mint)); border-radius:var(--radius-lg); display:flex; align-items:center; justify-content:center; margin:0 auto 20px; box-shadow:0 4px 14px rgba(149,213,178,0.3); position:relative;">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M12 2a10 10 0 0 0-7.5 16.5L12 22l7.5-3.5A10 10 0 0 0 12 2z"/><path d="M12 6v6l4 2"/></svg>
+          <div style="position:absolute; top:-8px; right:-8px; width:26px; height:26px; background:var(--amber); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:800; color:white; border:3px solid var(--white);">3</div>
+        </div>
+        <h3 style="font-size:1.05rem; font-weight:700; color:var(--gray-800); margin-bottom:6px;">{% trans "Pick Your Crops" %}</h3>
+        <p style="font-size:0.88rem; color:var(--gray-500); line-height:1.6;">{% trans "Browse the crop library, add what you grow, and start receiving tailored planting and harvest guidance." %}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     CTA SECTION
+     ═══════════════════════════════════════════════════ -->
+<section style="padding:80px 0 40px; text-align:center;" class="animate-in">
+  <div class="card card-gradient" style="max-width:720px; margin:0 auto; padding:48px 40px; text-align:center;">
+    <h2 style="font-family:var(--font-display); font-size:2rem; font-weight:800; margin-bottom:12px; color:var(--white);">
+      {% trans "Ready to Grow Smarter?" %}
+    </h2>
+    <p style="opacity:0.85; margin-bottom:32px; font-size:1.05rem; line-height:1.7; color:var(--white);">
+      {% trans "Made for farmers in Iringa Region, Tanzania. Get personalized crop and weather guidance tailored to your highland farm — completely free." %}
+    </p>
+    <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap;">
+      <a class="btn btn-lg" href="{% url 'advisor:register' %}" style="background:var(--white); color:var(--forest); box-shadow:0 4px 20px rgba(0,0,0,0.15);">
+        {% trans "Create Free Account" %}
+      </a>
+      <a class="btn btn-lg" href="{% url 'advisor:login' %}" style="background:rgba(255,255,255,0.15); color:var(--white); border:2px solid rgba(255,255,255,0.3);">
+        {% trans "Sign In" %}
+      </a>
+    </div>
+  </div>
+</section>
+{% endblock %}

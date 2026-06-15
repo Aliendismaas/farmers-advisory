@@ -1,0 +1,568 @@
+{% extends "advisor/base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Advisory Rules" %} — FarmWise{% endblock %}
+
+{% block extra_css %}
+<style>
+  .rules-layout {
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  .rules-grid {
+    display: grid;
+    grid-template-columns: 480px 1fr;
+    gap: 28px;
+    align-items: start;
+  }
+
+  @media (max-width: 1024px) {
+    .rules-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ═══ Form Panel ═══ */
+  .form-panel {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(27,67,50,0.06);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    position: sticky;
+    top: 96px;
+  }
+
+  .form-panel-header {
+    padding: 24px 28px 20px;
+    border-bottom: 1px solid var(--gray-100);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .form-panel-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .form-panel-icon svg { width: 22px; height: 22px; }
+
+  .form-panel-body {
+    padding: 24px 28px 28px;
+  }
+
+  /* ═══ Rules List ═══ */
+  .rules-list-panel {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(27,67,50,0.06);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+
+  .rules-list-header {
+    padding: 24px 28px 20px;
+    border-bottom: 1px solid var(--gray-100);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .rules-list-header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .rules-count {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: var(--radius-full);
+    background: var(--pale);
+    color: var(--forest);
+  }
+
+  .rules-list-body {
+    padding: 8px 0;
+  }
+
+  /* ═══ Rule Card ═══ */
+  .rule-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 18px 28px;
+    border-bottom: 1px solid var(--gray-50);
+    transition: background 0.2s ease;
+  }
+
+  .rule-item:last-child {
+    border-bottom: none;
+  }
+
+  .rule-item:hover {
+    background: var(--gray-50);
+  }
+
+  .rule-status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-top: 6px;
+    flex-shrink: 0;
+  }
+
+  .rule-status-dot.active {
+    background: var(--sage);
+    box-shadow: 0 0 0 3px rgba(82,183,136,0.2);
+  }
+
+  .rule-status-dot.inactive {
+    background: var(--gray-300);
+    box-shadow: 0 0 0 3px rgba(209,213,219,0.3);
+  }
+
+  .rule-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .rule-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--gray-800);
+    margin-bottom: 4px;
+  }
+
+  .rule-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .rule-key {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px 10px;
+    background: var(--gray-100);
+    border-radius: var(--radius-sm);
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 0.76rem;
+    color: var(--gray-600);
+    letter-spacing: 0.02em;
+  }
+
+  .rule-value {
+    font-size: 0.82rem;
+    color: var(--gray-500);
+  }
+
+  .rule-value strong {
+    color: var(--gray-700);
+    font-weight: 600;
+  }
+
+  .rule-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: var(--radius-full);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .rule-badge.active {
+    background: #D1FAE5;
+    color: #065F46;
+  }
+
+  .rule-badge.inactive {
+    background: var(--gray-100);
+    color: var(--gray-500);
+  }
+
+  .rule-badge svg { width: 11px; height: 11px; }
+
+  .rule-actions {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 2px;
+  }
+
+  .rule-actions form {
+    display: inline;
+  }
+
+  .btn-icon-sm {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--gray-400);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-icon-sm svg { width: 15px; height: 15px; }
+
+  .btn-icon-sm:hover {
+    background: var(--gray-100);
+    color: var(--gray-600);
+  }
+
+  .btn-icon-sm.edit:hover {
+    background: var(--pale);
+    color: var(--forest);
+  }
+
+  .btn-icon-sm.delete:hover {
+    background: var(--red-light);
+    color: var(--red);
+  }
+
+  /* ═══ Empty State ═══ */
+  .rules-empty {
+    padding: 56px 24px;
+    text-align: center;
+  }
+
+  .rules-empty svg {
+    width: 64px;
+    height: 64px;
+    color: var(--gray-300);
+    margin: 0 auto 16px;
+  }
+
+  .rules-empty h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--gray-700);
+    margin-bottom: 6px;
+  }
+
+  .rules-empty p {
+    font-size: 0.88rem;
+    color: var(--gray-400);
+    max-width: 300px;
+    margin: 0 auto;
+  }
+
+  /* ═══ Form Custom Select ═══ */
+  .form-panel .form-group select {
+    width: 100%;
+    padding: 12px 40px 12px 16px;
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    color: var(--gray-800);
+    background: var(--gray-50);
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    transition: all 0.25s var(--ease-out);
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='14' height='9' viewBox='0 0 14 9' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L7 7.5L13 1.5' stroke='%239CA3AF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    cursor: pointer;
+  }
+
+  .form-panel .form-group select:focus {
+    border-color: var(--sage);
+    box-shadow: 0 0 0 4px rgba(82,183,136,0.15);
+    background-color: var(--white);
+  }
+
+  .form-panel .form-group select:hover {
+    border-color: var(--sage-light);
+  }
+
+  .form-panel .form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  /* ═══ Info Banner ═══ */
+  .info-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 18px;
+    background: var(--blue-light);
+    border: 1px solid #BFDBFE;
+    border-radius: var(--radius-md);
+    margin-bottom: 24px;
+  }
+
+  .info-banner svg {
+    width: 18px;
+    height: 18px;
+    color: #1E40AF;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .info-banner p {
+    font-size: 0.84rem;
+    color: #1E40AF;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* ═══ Code Tag ═══ */
+  code {
+    background: var(--gray-100);
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 0.82rem;
+    color: var(--emerald);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="rules-layout">
+
+  <!-- ═══ Page Header ═══ -->
+  <div style="margin-bottom:32px;" class="animate-in">
+    <div style="margin-bottom:12px;">
+      <a href="{% url 'advisor:admin_panel' %}" class="btn btn-ghost btn-sm" style="padding-left:8px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+        {% trans "Back to Admin Panel" %}
+      </a>
+    </div>
+    <div style="display:flex; align-items:center; gap:14px; margin-bottom:8px;">
+      <div style="width:48px; height:48px; background:linear-gradient(135deg, var(--forest), var(--sage)); border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-green);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+          <polyline points="10 9 9 9 8 9"/>
+        </svg>
+      </div>
+      <div>
+        <h1 style="font-family:var(--font-display); font-size:2rem; font-weight:800; color:var(--forest); letter-spacing:-0.02em; line-height:1.2;">
+          {% trans "Advisory Rules" %}
+        </h1>
+        <p style="color:var(--gray-500); font-size:0.95rem; margin-top:4px;">
+          {% trans "Define thresholds and logic inputs used to generate alerts and recommendations." %}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="rules-grid">
+
+    <!-- ═══ Left: Form Panel ═══ -->
+    <div class="form-panel animate-in animate-delay-1">
+      <div class="form-panel-header">
+        <div class="form-panel-icon" style="background:var(--pale); color:var(--forest);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+        </div>
+        <div>
+          <h2 style="font-size:1.1rem; font-weight:700; color:var(--gray-800); margin:0;">{% trans "Add or Update Rule" %}</h2>
+          <p style="font-size:0.82rem; color:var(--gray-500); margin:2px 0 0;">{% trans "Set a rule key, value, and active status" %}</p>
+        </div>
+      </div>
+
+      <div class="form-panel-body">
+        <div class="info-banner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+          <p>{% trans "If a rule with the same key already exists, submitting this form will update its value and status instead of creating a duplicate." %}</p>
+        </div>
+
+        <form method="post" id="ruleForm">
+          {% csrf_token %}
+          {% for field in form %}
+          <div class="form-group">
+            <label for="{{ field.id_for_label }}">
+              {{ field.label }}
+              {% if field.field.required %}
+                <span style="color:var(--red); font-size:0.7rem; vertical-align:super; margin-left:2px;">*</span>
+              {% endif %}
+            </label>
+            {{ field }}
+            {{ field.errors }}
+          </div>
+          {% endfor %}
+
+          <button class="btn btn-primary btn-lg w-full" type="submit" style="justify-content:center; margin-top:8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            {% trans "Save Rule" %}
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ═══ Right: Rules List ═══ -->
+    <div class="rules-list-panel animate-in animate-delay-2">
+      <div class="rules-list-header">
+        <div class="rules-list-header-left">
+          <div class="form-panel-icon" style="background:#D1FAE5; color:#065F46;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="8" y1="6" x2="21" y2="6"/>
+              <line x1="8" y1="12" x2="21" y2="12"/>
+              <line x1="8" y1="18" x2="21" y2="18"/>
+              <line x1="3" y1="6" x2="3.01" y2="6"/>
+              <line x1="3" y1="12" x2="3.01" y2="12"/>
+              <line x1="3" y1="18" x2="3.01" y2="18"/>
+            </svg>
+          </div>
+          <div>
+            <h2 style="font-size:1.1rem; font-weight:700; color:var(--gray-800); margin:0;">{% trans "Current Rules" %}</h2>
+            <p style="font-size:0.82rem; color:var(--gray-500); margin:2px 0 0;">{% trans "Active advisory configuration" %}</p>
+          </div>
+        </div>
+        {% if rules %}
+          <span class="rules-count">{{ rules|length }} rule{{ rules|length|pluralize }}</span>
+        {% endif %}
+      </div>
+
+      <div class="rules-list-body">
+        {% if rules %}
+          {% for rule in rules %}
+          <div class="rule-item">
+            <div class="rule-status-dot {% if rule.is_active %}active{% else %}inactive{% endif %}"></div>
+            <div class="rule-content">
+              <div class="rule-name">{{ rule.name }}</div>
+              <div class="rule-meta">
+                <span class="rule-key">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                  {{ rule.key }}
+                </span>
+                <span class="rule-value">= <strong>{{ rule.value }}</strong></span>
+                <span class="rule-badge {% if rule.is_active %}active{% else %}inactive{% endif %}">
+                  {% if rule.is_active %}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    {% trans "Active" %}
+                  {% else %}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                    {% trans "Inactive" %}
+                  {% endif %}
+                </span>
+              </div>
+            </div>
+            <div class="rule-actions">
+              <!-- Edit: populate form with this rule's values -->
+              <button type="button" class="btn-icon-sm edit" title="Edit rule" onclick="editRule('{{ rule.name }}', '{{ rule.key }}', '{{ rule.value }}', {% if rule.is_active %}true{% else %}false{% endif %})">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+              </button>
+              <!-- Delete -->
+              <form method="post" action="{% url 'advisor:admin_rules' %}" class="delete-rule-form">
+                {% csrf_token %}
+                <input type="hidden" name="delete_rule" value="{{ rule.id }}">
+                <button type="button" class="btn-icon-sm delete delete-rule-btn" data-name="{{ rule.name }}" title="Delete rule">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    <line x1="10" y1="11" x2="10" y2="17"/>
+                    <line x1="14" y1="11" x2="14" y2="17"/>
+                  </svg>
+                </button>
+              </form>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="rules-empty">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+            <h3>{% trans "No rules configured yet" %}</h3>
+            <p>{% trans "Use the form to add your first advisory rule. Rules control alert thresholds and recommendation logic." %}</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function() {
+  // Populate form fields when "Edit" is clicked on a rule
+  window.editRule = function(name, key, value, isActive) {
+    const form = document.getElementById('ruleForm');
+    if (!form) return;
+
+    // Try to find fields by their name attribute
+    const nameField = form.querySelector('[name="name"]') || form.querySelector('#id_name');
+    const keyField  = form.querySelector('[name="key"]')  || form.querySelector('#id_key');
+    const valueField = form.querySelector('[name="value"]') || form.querySelector('#id_value');
+    const activeField = form.querySelector('[name="is_active"]') || form.querySelector('#id_is_active');
+
+    if (nameField)  nameField.value = name;
+    if (keyField)   keyField.value = key;
+    if (valueField) valueField.value = value;
+    if (activeField && activeField.type === 'checkbox') {
+      activeField.checked = isActive;
+    } else if (activeField) {
+      activeField.value = isActive ? 'true' : 'false';
+    }
+
+    // Scroll to form
+    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    // Flash the form panel
+    const panel = form.closest('.form-panel');
+    if (panel) {
+      panel.style.boxShadow = '0 0 0 3px rgba(82,183,136,0.3), var(--shadow-lg)';
+      setTimeout(function() {
+        panel.style.boxShadow = '';
+      }, 1500);
+    }
+  };
+})();
+
+  // Delete rule confirmation
+  document.querySelectorAll('.delete-rule-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var name = btn.dataset.name;
+      FarmWiseConfirm.danger({
+        title: 'Delete Rule',
+        message: 'Are you sure you want to delete "' + name + '"? This cannot be undone.',
+        confirmText: 'Yes, Delete',
+      }).then(function(confirmed) {
+        if (confirmed) btn.closest('form').submit();
+      });
+    });
+  });
+</script>
+{% endblock %}

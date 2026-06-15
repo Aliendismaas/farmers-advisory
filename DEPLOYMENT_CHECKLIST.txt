@@ -1,0 +1,23 @@
+Farmers Advisor — deployment checklist
+
+Environment
+- Set DJANGO_SECRET_KEY to a long random string; never commit it.
+- Set DJANGO_DEBUG=false in production.
+- Set DJANGO_ALLOWED_HOSTS to your domain(s), comma-separated.
+- Configure a real email backend (SMTP or provider) and DJANGO_DEFAULT_FROM_EMAIL for password reset.
+
+Django
+- Run migrations: python manage.py migrate
+- Collect static: python manage.py collectstatic (behind a reverse proxy or object storage as appropriate).
+- Create superuser: python manage.py createsuperuser
+- Seed crops: python manage.py seed_advisor
+
+HTTPS and cookies
+- Serve the site over HTTPS in production.
+- Review SESSION_COOKIE_SECURE and CSRF_COOKIE_SECURE when DEBUG is false.
+
+External services
+- Open-Meteo and Nominatim are used without API keys; respect their fair-use policies and consider caching (WEATHER_CACHE_TTL_SECONDS).
+
+Data quality
+- Replace demo crop calendars with locally validated agronomy data before relying on advice in the field.

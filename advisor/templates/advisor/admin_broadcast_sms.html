@@ -1,0 +1,563 @@
+{% extends "advisor/base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Broadcast SMS" %} — FarmWise{% endblock %}
+
+{% block extra_css %}
+<style>
+  .broadcast-layout {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .broadcast-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(27,67,50,0.06);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+
+  .broadcast-card-header {
+    padding: 24px 28px 20px;
+    border-bottom: 1px solid var(--gray-100);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .broadcast-header-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, #7C3AED, #A78BFA);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .broadcast-header-icon svg { width: 22px; height: 22px; }
+
+  .broadcast-card-body {
+    padding: 28px;
+  }
+
+  .advisory-type-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  .advisory-type-option {
+    position: relative;
+  }
+
+  .advisory-type-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .advisory-type-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 10px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.18s var(--ease-out);
+    text-align: center;
+    background: var(--white);
+  }
+
+  .advisory-type-label:hover {
+    border-color: var(--sage);
+    background: var(--pale);
+  }
+
+  .advisory-type-option input[type="radio"]:checked + .advisory-type-label {
+    border-color: var(--forest);
+    background: var(--pale);
+    box-shadow: 0 0 0 3px rgba(82,183,136,0.15);
+  }
+
+  .advisory-type-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .advisory-type-icon.all    { background: rgba(82,183,136,0.12); color: var(--forest); }
+  .advisory-type-icon.plant  { background: rgba(34,197,94,0.12);  color: #16A34A; }
+  .advisory-type-icon.harvest{ background: rgba(245,158,11,0.12); color: #D97706; }
+
+  .advisory-type-name {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--gray-700);
+    line-height: 1.3;
+  }
+
+  .recipient-preview {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: var(--pale);
+    border: 1px solid rgba(82,183,136,0.3);
+    border-radius: var(--radius-md);
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: var(--forest);
+    font-weight: 500;
+    min-height: 44px;
+    transition: opacity 0.2s ease;
+  }
+
+  .recipient-preview svg { color: var(--sage); flex-shrink: 0; }
+
+  .char-counter {
+    display: flex;
+    justify-content: flex-end;
+    font-size: 0.8rem;
+    color: var(--gray-400);
+    margin-top: 6px;
+    transition: color 0.2s;
+  }
+
+  .char-counter.warn { color: var(--amber); }
+  .char-counter.over { color: var(--red); font-weight: 600; }
+
+  .send-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 28px;
+    background: linear-gradient(135deg, #7C3AED, #A78BFA);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s var(--ease-out);
+    box-shadow: 0 2px 8px rgba(124,58,237,0.3);
+  }
+
+  .send-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(124,58,237,0.4);
+  }
+
+  .send-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .send-btn svg { width: 18px; height: 18px; }
+
+  /* Results */
+  .results-card {
+    border-radius: var(--radius-lg);
+    border: 1px solid;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+
+  .results-card.success {
+    border-color: rgba(82,183,136,0.4);
+    background: linear-gradient(135deg, #F0FDF4, #DCFCE7);
+  }
+
+  .results-card.partial {
+    border-color: rgba(245,158,11,0.4);
+    background: linear-gradient(135deg, #FFFBEB, #FEF3C7);
+  }
+
+  .results-header {
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+  }
+
+  .results-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .results-icon.ok { background: var(--sage); color: #fff; }
+  .results-icon.warn { background: var(--amber); color: #fff; }
+
+  .results-icon svg { width: 20px; height: 20px; }
+
+  .results-body { padding: 20px 24px; }
+
+  .results-stats {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .results-stat {
+    text-align: center;
+  }
+
+  .results-stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  .results-stat-value.sent-val { color: var(--forest); }
+  .results-stat-value.failed-val { color: var(--red); }
+
+  .results-stat-label {
+    font-size: 0.8rem;
+    color: var(--gray-500);
+    margin-top: 4px;
+  }
+
+  .failed-list {
+    margin-top: 16px;
+    background: rgba(239,68,68,0.06);
+    border: 1px solid rgba(239,68,68,0.2);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .failed-list-header {
+    padding: 10px 16px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #991B1B;
+    border-bottom: 1px solid rgba(239,68,68,0.15);
+    background: rgba(239,68,68,0.06);
+  }
+
+  .failed-row {
+    padding: 10px 16px;
+    border-bottom: 1px solid rgba(239,68,68,0.1);
+    font-size: 0.85rem;
+    color: var(--gray-700);
+  }
+
+  .failed-row:last-child { border-bottom: none; }
+  .failed-row strong { color: var(--gray-800); }
+  .failed-row span { color: var(--gray-400); }
+
+  .preview-message {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-100);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    font-size: 0.88rem;
+    color: var(--gray-700);
+    line-height: 1.6;
+    word-break: break-word;
+  }
+
+  @media (max-width: 480px) {
+    .advisory-type-grid { grid-template-columns: 1fr; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="broadcast-layout animate-in">
+
+  <!-- Back link -->
+  <div style="margin-bottom:20px;">
+    <a href="{% url 'advisor:admin_panel' %}" style="display:inline-flex; align-items:center; gap:6px; font-size:0.88rem; color:var(--gray-500); text-decoration:none; font-weight:500;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+      {% trans "Admin Panel" %}
+    </a>
+  </div>
+
+  <!-- Results block (shown after successful POST) -->
+  {% if results %}
+  <div class="results-card {% if results.failed == 0 %}success{% else %}partial{% endif %} animate-in">
+    <div class="results-header">
+      <div class="results-icon {% if results.failed == 0 %}ok{% else %}warn{% endif %}">
+        {% if results.failed == 0 %}
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        {% else %}
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="9" x2="12" y2="13"/><circle cx="12" cy="17" r="1" fill="currentColor"/><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+        {% endif %}
+      </div>
+      <div>
+        <div style="font-weight:700; font-size:1rem; color:var(--gray-800);">
+          {% blocktrans with name=results.crop_name %}Broadcast complete — {{ name }}{% endblocktrans %}
+        </div>
+        <div style="font-size:0.83rem; color:var(--gray-500); margin-top:2px;">
+          {% if results.advisory_type == "planting" %}
+            {% trans "Sent to farmers interested in planting advisories" %}
+          {% elif results.advisory_type == "harvest" %}
+            {% trans "Sent to farmers interested in harvest advisories" %}
+          {% else %}
+            {% trans "Sent to all eligible farmers tracking this crop" %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="results-body">
+      <div class="results-stats">
+        <div class="results-stat">
+          <div class="results-stat-value sent-val">{{ results.sent }}</div>
+          <div class="results-stat-label">{% trans "Sent" %}</div>
+        </div>
+        {% if results.failed %}
+        <div class="results-stat">
+          <div class="results-stat-value failed-val">{{ results.failed }}</div>
+          <div class="results-stat-label">{% trans "Failed" %}</div>
+        </div>
+        {% endif %}
+      </div>
+
+      <div style="margin-bottom:12px; font-size:0.83rem; color:var(--gray-500); font-weight:500;">{% trans "Message sent:" %}</div>
+      <div class="preview-message">{{ results.message }}</div>
+
+      {% if results.failed_details %}
+      <div class="failed-list">
+        <div class="failed-list-header">{% blocktrans with n=results.failed %}Failed deliveries ({{ n }}){% endblocktrans %}</div>
+        {% for item in results.failed_details %}
+        <div class="failed-row">
+          <strong>{{ item.username }}</strong>
+          <span> — {{ item.error }}</span>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Broadcast Form Card -->
+  <div class="broadcast-card">
+    <div class="broadcast-card-header">
+      <div class="broadcast-header-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.65 3.38 2 2 0 0 1 3.62 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6.18 6.18l.91-.91a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+        </svg>
+      </div>
+      <div>
+        <h1 style="font-size:1.25rem; font-weight:800; color:var(--forest); margin:0;">{% trans "Broadcast SMS" %}</h1>
+        <p style="font-size:0.85rem; color:var(--gray-400); margin:4px 0 0;">{% trans "Send a custom advisory message to farmers tracking a specific crop." %}</p>
+      </div>
+    </div>
+
+    <div class="broadcast-card-body">
+      <form method="post" id="broadcastForm">
+        {% csrf_token %}
+
+        <!-- Crop field -->
+        <div class="form-group" style="margin-bottom:20px;">
+          <label for="{{ form.crop.id_for_label }}" style="display:block; font-weight:600; color:var(--gray-700); margin-bottom:8px; font-size:0.92rem;">
+            {% trans "Select Crop" %}
+          </label>
+          {% if form.crop.errors %}
+            <div class="errorlist">
+              {% for e in form.crop.errors %}<div>{{ e }}</div>{% endfor %}
+            </div>
+          {% endif %}
+          {{ form.crop }}
+        </div>
+
+        <!-- Advisory Type -->
+        <div class="form-group" style="margin-bottom:20px;">
+          <label style="display:block; font-weight:600; color:var(--gray-700); margin-bottom:4px; font-size:0.92rem;">
+            {% trans "Advisory Type" %}
+          </label>
+          <p style="font-size:0.8rem; color:var(--gray-400); margin:0 0 10px;">{% trans "Choose which group of farmers should receive this message." %}</p>
+          <div class="advisory-type-grid">
+
+            <!-- All Farmers -->
+            <div class="advisory-type-option">
+              <input type="radio" name="advisory_type" id="adv_all" value="all" checked>
+              <label class="advisory-type-label" for="adv_all">
+                <div class="advisory-type-icon all">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <span class="advisory-type-name">{% trans "All Farmers" %}</span>
+              </label>
+            </div>
+
+            <!-- Planting Advisory -->
+            <div class="advisory-type-option">
+              <input type="radio" name="advisory_type" id="adv_planting" value="planting">
+              <label class="advisory-type-label" for="adv_planting">
+                <div class="advisory-type-icon plant">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22V12"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/><path d="M12 12C12 7 17 3 22 3c0 5-4 9-10 9"/><path d="M12 12C12 7 7 3 2 3c0 5 4 9 10 9"/></svg>
+                </div>
+                <span class="advisory-type-name">{% trans "Plant Advisory" %}</span>
+              </label>
+            </div>
+
+            <!-- Harvest Advisory -->
+            <div class="advisory-type-option">
+              <input type="radio" name="advisory_type" id="adv_harvest" value="harvest">
+              <label class="advisory-type-label" for="adv_harvest">
+                <div class="advisory-type-icon harvest">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 2a2 2 0 0 0-2 2v5H4a2 2 0 0 0-2 2v3a6 6 0 0 0 6 6h8a6 6 0 0 0 6-6v-3a2 2 0 0 0-2-2h-5V4a2 2 0 0 0-2-2z"/></svg>
+                </div>
+                <span class="advisory-type-name">{% trans "Harvest Advisory" %}</span>
+              </label>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Recipient preview (updates with both crop + advisory type) -->
+        <div class="recipient-preview" id="recipientPreview" style="margin-bottom:20px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          <span id="recipientText">{% trans "Select a crop to see how many farmers will receive this message." %}</span>
+        </div>
+
+        <!-- Message field -->
+        <div class="form-group" style="margin-bottom:24px;">
+          <label for="{{ form.message.id_for_label }}" style="display:block; font-weight:600; color:var(--gray-700); margin-bottom:8px; font-size:0.92rem;">
+            {% trans "Message" %}
+          </label>
+          {% if form.message.errors %}
+            <div class="errorlist">
+              {% for e in form.message.errors %}<div>{{ e }}</div>{% endfor %}
+            </div>
+          {% endif %}
+          {{ form.message }}
+          <div class="char-counter" id="charCounter">
+            <span id="charCount">0</span>&nbsp;/ 459
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+          <a href="{% url 'advisor:admin_panel' %}" class="btn btn-outline" style="padding:12px 24px;">{% trans "Cancel" %}</a>
+          <button type="submit" class="send-btn" id="sendBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+            {% trans "Send Broadcast" %}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Info box -->
+  <div style="background:var(--blue-light); border:1px solid rgba(30,64,175,0.15); border-radius:var(--radius-md); padding:16px 20px; display:flex; gap:12px; align-items:flex-start; font-size:0.85rem; color:#1E3A8A;">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:1px;">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="8" x2="12" y2="12"/>
+      <line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    <div>
+      <strong>{% trans "Who receives this?" %}</strong>
+      {% trans "Only farmers who track the selected crop, have SMS enabled, and have a registered phone number. Choosing 'Plant Advisory' targets farmers with a planting or 'both' preference; 'Harvest Advisory' targets harvest or 'both'. 'All Farmers' sends to everyone eligible regardless of preference." %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  var counts = {{ crop_recipient_counts_json|safe }};
+  var cropSelect = document.getElementById('{{ form.crop.id_for_label }}');
+  var recipientText = document.getElementById('recipientText');
+  var charCountEl = document.getElementById('charCount');
+  var charCounter = document.getElementById('charCounter');
+  var messageArea = document.getElementById('{{ form.message.id_for_label }}');
+  var sendBtn = document.getElementById('sendBtn');
+  var advRadios = document.querySelectorAll('input[name="advisory_type"]');
+
+  function getSelectedAdvType() {
+    for (var i = 0; i < advRadios.length; i++) {
+      if (advRadios[i].checked) return advRadios[i].value;
+    }
+    return 'all';
+  }
+
+  function getAdvTypeLabel(t) {
+    if (t === 'planting') return 'Plant Advisory';
+    if (t === 'harvest') return 'Harvest Advisory';
+    return 'All Farmers';
+  }
+
+  function updateRecipient() {
+    var val = cropSelect.value;
+    var advType = getSelectedAdvType();
+    if (!val) {
+      recipientText.textContent = 'Select a crop to see how many farmers will receive this message.';
+      return;
+    }
+    var cropData = counts[val];
+    var n = (cropData && cropData[advType] !== undefined) ? cropData[advType] : 0;
+    if (n === 0) {
+      recipientText.textContent = 'No eligible farmers for this crop and advisory type (check SMS preferences and phone numbers).';
+    } else if (n === 1) {
+      recipientText.textContent = '1 farmer will receive this message (' + getAdvTypeLabel(advType) + ').';
+    } else {
+      recipientText.textContent = n + ' farmers will receive this message (' + getAdvTypeLabel(advType) + ').';
+    }
+  }
+
+  function updateCharCount() {
+    var len = messageArea.value.length;
+    charCountEl.textContent = len;
+    charCounter.className = 'char-counter';
+    if (len > 459) {
+      charCounter.classList.add('over');
+    } else if (len > 380) {
+      charCounter.classList.add('warn');
+    }
+  }
+
+  function confirmSend(e) {
+    var cropText = cropSelect.options[cropSelect.selectedIndex] ? cropSelect.options[cropSelect.selectedIndex].text : '';
+    var advType = getSelectedAdvType();
+    var cropData = counts[cropSelect.value];
+    var n = (cropData && cropData[advType] !== undefined) ? cropData[advType] : 0;
+    if (!cropSelect.value || n === 0) return;
+    var confirmed = confirm(
+      'Send ' + getAdvTypeLabel(advType) + ' SMS to ' + n + ' farmer(s) tracking ' + cropText + '?\n\nThis action cannot be undone.'
+    );
+    if (!confirmed) e.preventDefault();
+  }
+
+  cropSelect.addEventListener('change', updateRecipient);
+  advRadios.forEach(function (r) { r.addEventListener('change', updateRecipient); });
+  messageArea.addEventListener('input', updateCharCount);
+  document.getElementById('broadcastForm').addEventListener('submit', confirmSend);
+
+  // Init
+  updateRecipient();
+  updateCharCount();
+})();
+</script>
+{% endblock %}

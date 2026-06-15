@@ -1,0 +1,194 @@
+{% extends "advisor/base.html" %}
+{% load i18n advisor_extras %}
+{% block title %}{% trans "Crop Library" %} — FarmWise{% endblock %}
+
+{% block extra_css %}
+<style>
+  .crop-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+  }
+
+  .category-filter {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+  }
+
+  .category-chip {
+    padding: 8px 18px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border-radius: var(--radius-full);
+    background: var(--white);
+    color: var(--gray-600);
+    border: 1px solid var(--gray-200);
+    cursor: pointer;
+    transition: all 0.25s var(--ease-out);
+  }
+
+  .category-chip:hover {
+    border-color: var(--sage-light);
+    color: var(--emerald);
+    background: var(--pale);
+  }
+
+  .category-chip.active {
+    background: linear-gradient(135deg, var(--forest), var(--emerald));
+    color: var(--white);
+    border-color: transparent;
+    box-shadow: var(--shadow-green);
+  }
+
+  .crop-emoji {
+    font-size: 2.2rem;
+    line-height: 1;
+    filter: saturate(1.1);
+  }
+
+  @media (max-width: 600px) {
+    .crop-grid { grid-template-columns: 1fr; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; flex-wrap:wrap; gap:16px;" class="animate-in">
+  <div>
+    <h1 style="font-family:var(--font-display); font-size:2rem; font-weight:800; color:var(--forest); letter-spacing:-0.02em;">
+      {% trans "Crop Library" %}
+    </h1>
+    <p style="color:var(--gray-500); font-size:0.95rem; margin-top:4px;">
+      {% trans "Browse crops and add them to your watchlist for personalized guidance." %}
+    </p>
+  </div>
+</div>
+
+<!-- Notice Banner -->
+<div class="card animate-in animate-delay-1" style="display:flex; align-items:center; gap:14px; padding:16px 20px; margin-bottom:24px; background:var(--blue-light); border-color:#BFDBFE;">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E40AF" stroke-width="2" style="flex-shrink:0;">
+    <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+  </svg>
+  <p style="font-size:0.88rem; color:#1E40AF; line-height:1.5;">
+    <strong>{% trans "Regional calendars are indicative only" %}</strong> — {% trans "always validate with your local agricultural extension office for the most accurate planting advice." %}
+  </p>
+</div>
+
+<!-- Category Filters -->
+<div class="category-filter animate-in animate-delay-1">
+  <button class="category-chip active" onclick="filterCrops('all', this)">{% trans "All Crops" %}</button>
+  <button class="category-chip" onclick="filterCrops('Cereal', this)">
+    <span style="margin-right:4px;">🌾</span> {% trans "Cereals" %}
+  </button>
+  <button class="category-chip" onclick="filterCrops('Vegetable', this)">
+    <span style="margin-right:4px;">🥬</span> {% trans "Vegetables" %}
+  </button>
+  <button class="category-chip" onclick="filterCrops('Legume', this)">
+    <span style="margin-right:4px;">🫘</span> {% trans "Legumes" %}
+  </button>
+  <button class="category-chip" onclick="filterCrops('Root / tuber', this)">
+    <span style="margin-right:4px;">🥕</span> {% trans "Root / Tubers" %}
+  </button>
+  <button class="category-chip" onclick="filterCrops('Oilseed', this)">
+    <span style="margin-right:4px;">🌻</span> {% trans "Oilseeds" %}
+  </button>
+  <button class="category-chip" onclick="filterCrops('Cash crop', this)">
+    <span style="margin-right:4px;">☕</span> {% trans "Cash Crops" %}
+  </button>
+</div>
+
+<!-- Crop Grid -->
+{% if crops %}
+<div class="crop-grid animate-in animate-delay-2">
+  {% for crop in crops %}
+  <div class="crop-card card-hover" data-category="{{ crop.category }}">
+    <div class="crop-card-image" style="{% if crop.image %}padding:0; overflow:hidden;{% endif %}">
+      {% if crop.image %}
+        <img src="{{ crop.image.url }}" alt="{{ crop.name }}"
+             style="width:100%; height:100%; object-fit:cover; display:block; border-radius:inherit;">
+      {% else %}
+        <!-- Decorative gradient shapes -->
+        <div style="position:absolute; top:-20px; right:-20px; width:100px; height:100px; background:rgba(27,67,50,0.04); border-radius:50%;"></div>
+        <div style="position:absolute; bottom:-10px; left:-10px; width:60px; height:60px; background:rgba(82,183,136,0.06); border-radius:50%;"></div>
+        <div class="crop-emoji">
+          {% if crop.category == "Cereal" %}🌾
+          {% elif crop.category == "Vegetable" %}🥬
+          {% elif crop.category == "Legume" %}🫘
+          {% elif crop.category == "Root / tuber" %}🥕
+          {% elif crop.category == "Oilseed" %}🌻
+          {% elif crop.category == "Cash crop" %}☕
+          {% else %}🌱{% endif %}
+        </div>
+      {% endif %}
+      {% if crop.id in tracked %}
+      <div style="position:absolute; top:8px; right:8px; width:22px; height:22px; border-radius:50%; background:rgba(255,255,255,0.95); backdrop-filter:blur(6px); box-shadow:0 1px 4px rgba(0,0,0,0.15); display:flex; align-items:center; justify-content:center;" title="Tracked">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--emerald)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      {% endif %}
+    </div>
+    <div class="crop-card-body">
+      <h3>
+        <a href="{% url 'advisor:crop_detail' crop.slug %}">{% trans crop.name %}</a>
+      </h3>
+      <div class="crop-meta">
+        <span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px; margin-right:2px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          {{ crop.growing_zone.name }}
+        </span>
+        <span class="dot"></span>
+        <span>{% trans crop.category %}</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+        <span style="font-size:0.78rem; color:var(--gray-400);">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px; margin-right:2px;"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          {% trans "Plant:" %} {{ crop.plant_start_month|month_name }}–{{ crop.plant_end_month|month_name }}
+        </span>
+      </div>
+      <div style="margin-top:14px;">
+        <a href="{% url 'advisor:crop_detail' crop.slug %}" class="btn btn-secondary btn-sm w-full" style="justify-content:center;">
+          {% trans "View Details" %}
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<!-- Empty State -->
+<div class="card animate-in animate-delay-2">
+  <div class="empty-state">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+      <path d="M12 2a10 10 0 0 0-7.5 16.5L12 22l7.5-3.5A10 10 0 0 0 12 2z"/>
+      <path d="M12 6v6l4 2"/>
+    </svg>
+    <h3>{% trans "No crops in the catalog" %}</h3>
+    <p>Run <code style="background:var(--gray-100); padding:2px 8px; border-radius:4px; font-size:0.85rem;">python manage.py seed_advisor</code> to populate the crop library.</p>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function filterCrops(category, btn) {
+  // Update active chip
+  document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+
+  // Filter cards
+  document.querySelectorAll('.crop-card').forEach(card => {
+    const cardCategory = card.dataset.category;
+    if (category === 'all' || cardCategory === category) {
+      card.style.display = '';
+      card.style.animation = 'fadeInUp 0.4s var(--ease-out) both';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+</script>
+{% endblock %}

@@ -1,0 +1,242 @@
+{% extends "advisor/base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Advisory Preference" %} — FarmWise{% endblock %}
+
+{% block extra_css %}
+<style>
+  .pref-layout {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 32px 16px;
+  }
+
+  .pref-header {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+
+  .pref-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, var(--forest), var(--sage));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 18px;
+    box-shadow: var(--shadow-green);
+  }
+
+  .pref-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--gray-800);
+    margin: 0 0 8px;
+  }
+
+  .pref-header p {
+    font-size: 0.9rem;
+    color: var(--gray-500);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .pref-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+
+  .pref-card {
+    position: relative;
+    display: block;
+    cursor: pointer;
+  }
+
+  .pref-card input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .pref-card-inner {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px 22px;
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    background: var(--white);
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    box-shadow: var(--shadow-xs);
+  }
+
+  .pref-card input:checked + .pref-card-inner {
+    border-color: var(--sage);
+    background: var(--pale);
+    box-shadow: 0 0 0 3px rgba(82,183,136,0.15), var(--shadow-sm);
+  }
+
+  .pref-card-inner:hover {
+    border-color: var(--mint);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .pref-card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 1.5rem;
+  }
+
+  .pref-card-icon.planting { background: #D8F3DC; }
+  .pref-card-icon.harvest  { background: #FEF3C7; }
+  .pref-card-icon.both     { background: #DBEAFE; }
+
+  .pref-card-text { flex: 1; }
+
+  .pref-card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--gray-800);
+    margin: 0 0 4px;
+  }
+
+  .pref-card-desc {
+    font-size: 0.83rem;
+    color: var(--gray-500);
+    margin: 0;
+    line-height: 1.45;
+  }
+
+  .pref-card-check {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--gray-300);
+    flex-shrink: 0;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .pref-card input:checked ~ * .pref-card-check,
+  .pref-card input:checked + .pref-card-inner .pref-card-check {
+    border-color: var(--sage);
+    background: var(--sage);
+  }
+
+  .pref-card input:checked + .pref-card-inner .pref-card-check::after {
+    content: "";
+    display: block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: white;
+  }
+
+  .pref-submit {
+    width: 100%;
+    padding: 13px 20px;
+    background: linear-gradient(135deg, var(--forest), var(--emerald));
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    box-shadow: var(--shadow-green);
+  }
+
+  .pref-submit:hover { opacity: 0.9; }
+
+  .pref-note {
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--gray-400);
+    margin-top: 14px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="pref-layout animate-in">
+
+  {% if messages %}
+    {% for msg in messages %}
+      <div class="alert alert-{{ msg.tags }}" style="margin-bottom:20px;">{{ msg }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <div class="pref-header">
+    <div class="pref-icon">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/>
+        <path d="M12 8v4l3 3"/>
+      </svg>
+    </div>
+    <h1>{% trans "What advisories do you want?" %}</h1>
+    <p>{% trans "Choose the type of farming guidance you'd like to receive on your dashboard and by SMS." %}<br>{% trans "You can change this at any time from your profile settings." %}</p>
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+    <div class="pref-cards">
+
+      <label class="pref-card">
+        <input type="radio" name="advisory_preference" value="{{ AdvisoryPreference.PLANTING }}"
+          {% if current == AdvisoryPreference.PLANTING %}checked{% endif %}>
+        <div class="pref-card-inner">
+          <div class="pref-card-icon planting">🌱</div>
+          <div class="pref-card-text">
+            <p class="pref-card-title">{% trans "Planting Advisory" %}</p>
+            <p class="pref-card-desc">{% trans "Get guidance on the best time to plant your crops — ideal windows, soil prep, weather risks before and during planting." %}</p>
+          </div>
+          <div class="pref-card-check"></div>
+        </div>
+      </label>
+
+      <label class="pref-card">
+        <input type="radio" name="advisory_preference" value="{{ AdvisoryPreference.HARVEST }}"
+          {% if current == AdvisoryPreference.HARVEST %}checked{% endif %}>
+        <div class="pref-card-inner">
+          <div class="pref-card-icon harvest">🌾</div>
+          <div class="pref-card-text">
+            <p class="pref-card-title">{% trans "Harvest Advisory" %}</p>
+            <p class="pref-card-desc">{% trans "Know when your crops are ready to harvest and get alerts about weather that could damage your yield at harvest time." %}</p>
+          </div>
+          <div class="pref-card-check"></div>
+        </div>
+      </label>
+
+      <label class="pref-card">
+        <input type="radio" name="advisory_preference" value="{{ AdvisoryPreference.BOTH }}"
+          {% if current == AdvisoryPreference.BOTH or not current %}checked{% endif %}>
+        <div class="pref-card-inner">
+          <div class="pref-card-icon both">📋</div>
+          <div class="pref-card-text">
+            <p class="pref-card-title">{% trans "Both — Full Advisory" %}</p>
+            <p class="pref-card-desc">{% trans "Receive complete guidance covering both planting and harvest windows for all your crops." %}</p>
+          </div>
+          <div class="pref-card-check"></div>
+        </div>
+      </label>
+
+    </div>
+
+    <button type="submit" class="pref-submit">{% trans "Save & Go to Dashboard" %}</button>
+  </form>
+
+  <p class="pref-note">{% trans "You can update this preference anytime from Profile Settings." %}</p>
+
+</div>
+{% endblock %}

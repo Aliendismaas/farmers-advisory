@@ -1,0 +1,261 @@
+{% extends "advisor/base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Set Your Farm Location" %} — FarmWise{% endblock %}
+
+{% block extra_css %}
+<style>
+  .onboarding-layout {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .step-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 40px;
+  }
+
+  .step-dot {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s var(--ease-out);
+  }
+
+  .step-dot.active {
+    background: linear-gradient(135deg, var(--forest), var(--sage));
+    color: var(--white);
+    box-shadow: var(--shadow-green);
+  }
+
+  .step-dot.completed {
+    background: var(--sage);
+    color: var(--white);
+    box-shadow: 0 0 0 4px var(--pale);
+  }
+
+  .step-dot.inactive {
+    background: var(--gray-100);
+    color: var(--gray-400);
+    border: 2px solid var(--gray-200);
+  }
+
+  .step-line {
+    width: 80px;
+    height: 3px;
+    background: var(--gray-200);
+    border-radius: var(--radius-full);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .step-line.active {
+    background: linear-gradient(to right, var(--sage), var(--sage-light));
+  }
+
+  .search-result-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-radius: var(--radius-md);
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    transition: all 0.25s var(--ease-out);
+    margin-bottom: 10px;
+  }
+
+  .search-result-card:hover {
+    background: var(--pale);
+    border-color: var(--foam);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .location-icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .map-placeholder {
+    height: 200px;
+    background: linear-gradient(135deg, var(--pale) 0%, var(--foam) 50%, #E0F2FE 100%);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+
+  .map-placeholder::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 30% 40%, rgba(27,67,50,0.06), transparent 40%),
+      radial-gradient(circle at 70% 60%, rgba(82,183,136,0.06), transparent 40%);
+  }
+
+  .pin-bounce {
+    animation: pinBounce 2s ease-in-out infinite;
+  }
+
+  @keyframes pinBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  @media (max-width: 600px) {
+    .step-line {
+      width: 40px;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="onboarding-layout animate-in">
+  <!-- Page Header -->
+  <div style="text-align:center; margin-bottom:32px;">
+    <div style="width:64px; height:64px; background:linear-gradient(135deg, var(--forest), var(--sage)); border-radius:var(--radius-lg); display:flex; align-items:center; justify-content:center; margin:0 auto 20px; box-shadow:var(--shadow-green);">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+        <circle cx="12" cy="10" r="3"/>
+      </svg>
+    </div>
+    <h1 style="font-family:var(--font-display); font-size:2rem; font-weight:800; color:var(--forest); letter-spacing:-0.02em; margin-bottom:8px;">
+      {% trans "Set Your Farm Location" %}
+    </h1>
+    <p style="color:var(--gray-500); font-size:0.95rem; max-width:500px; margin:0 auto; line-height:1.6;">
+      {% trans "Search for your village or town within" %} <strong style="color:var(--forest);">{% trans "Iringa Region" %}</strong> {% trans "and pick a result. We use this for your local weather forecast." %}
+    </p>
+  </div>
+
+  <!-- Step Indicator -->
+  <div class="step-indicator animate-in animate-delay-1">
+    <div class="step-dot active" id="step1">1</div>
+    <div class="step-line active" id="line1"></div>
+    <div class="step-dot {% if geo_results or request.POST.manual_save %}active{% else %}inactive{% endif %}" id="step2">2</div>
+    <div class="step-line" id="line2"></div>
+    <div class="step-dot inactive" id="step3">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    </div>
+  </div>
+
+  <!-- Map Placeholder -->
+  <div class="map-placeholder animate-in animate-delay-1">
+    <div style="text-align:center; position:relative; z-index:1;">
+      <div class="pin-bounce">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--forest)" stroke-width="2" stroke-linecap="round" style="filter:drop-shadow(0 2px 4px rgba(0,0,0,0.15));">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+          <circle cx="12" cy="10" r="3"/>
+        </svg>
+      </div>
+      <p style="color:var(--forest); font-weight:600; font-size:0.88rem; margin-top:8px;">Iringa Region, Tanzania</p>
+    </div>
+    <!-- Grid lines decoration -->
+    <div style="position:absolute; inset:0; opacity:0.08; background-image:linear-gradient(var(--forest) 1px, transparent 1px), linear-gradient(90deg, var(--forest) 1px, transparent 1px); background-size:40px 40px;"></div>
+  </div>
+
+  <!-- Search Section -->
+  <div class="card animate-in animate-delay-2" style="padding:24px; margin-bottom:20px;">
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:18px;">
+      <div class="location-icon-box" style="background:var(--pale);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--forest)" stroke-width="2" stroke-linecap="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      </div>
+      <div>
+        <h2 style="font-size:1.1rem; font-weight:700; color:var(--gray-800);">{% trans "Search for Your Location" %}</h2>
+        <p style="font-size:0.82rem; color:var(--gray-500);">{% trans "Type your village, ward, or town name in Iringa Region" %}</p>
+      </div>
+    </div>
+
+    <form method="post">
+      {% csrf_token %}
+      {{ search_form.q.errors }}
+      <div class="search-bar" style="margin-bottom:14px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gray-400)" stroke-width="2" style="flex-shrink:0;">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="text" name="q" id="id_q" placeholder="e.g. Mafinga, Isimani, Iringa Town..." value="{{ search_form.q.value|default:'' }}">
+        <button type="submit" class="search-btn" id="searchBtn" name="search" value="1" style="display:inline-flex; align-items:center; gap:7px;">
+          <span id="searchSpinner" style="display:none; width:14px; height:14px; border:2px solid rgba(255,255,255,0.35); border-top-color:#fff; border-radius:50%; flex-shrink:0; animation:btn-spin 0.7s linear infinite;"></span>
+          <span id="searchLabel">{% trans "Search" %}</span>
+        </button>
+      </div>
+    </form>
+
+    <script>
+      document.querySelector('form').addEventListener('submit', function() {
+        document.getElementById('searchLabel').textContent = '{% trans "Searching…" %}';
+        document.getElementById('searchSpinner').style.display = 'block';
+        var btn = document.getElementById('searchBtn');
+        btn.disabled = true;
+        btn.style.opacity = '0.75';
+        btn.style.cursor = 'not-allowed';
+      });
+    </script>
+  </div>
+
+  <!-- Search Results -->
+  {% if geo_results %}
+  <div class="card animate-in" style="padding:24px; margin-bottom:20px;">
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:18px;">
+      <div class="location-icon-box" style="background:var(--blue-light);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1E40AF" stroke-width="2" stroke-linecap="round">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+          <circle cx="12" cy="10" r="3"/>
+        </svg>
+      </div>
+      <div>
+        <h2 style="font-size:1.1rem; font-weight:700; color:var(--gray-800);">{% trans "Select Your Location" %}</h2>
+        <p style="font-size:0.82rem; color:var(--gray-500);">{{ geo_results|length }} {% trans "results found — pick the closest match" %}</p>
+      </div>
+    </div>
+
+    {% for row in geo_results %}
+    <div class="search-result-card">
+      <div style="display:flex; align-items:center; gap:14px;">
+        <div style="width:36px; height:36px; background:var(--pale); border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--forest)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <span style="font-size:0.92rem; font-weight:500; color:var(--gray-700);">{{ row.label }}</span>
+      </div>
+      <form method="post" style="display:inline;">
+        {% csrf_token %}
+        <input type="hidden" name="pick_index" value="{{ forloop.counter0 }}">
+        <button type="submit" class="btn btn-primary btn-sm">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          {% trans "Use This" %}
+        </button>
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Help Text -->
+  <div style="text-align:center; margin-top:28px; padding:20px;">
+    <p style="color:var(--gray-400); font-size:0.82rem; line-height:1.6;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px; margin-right:4px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      {% trans "Your location is used only for weather data via Open-Meteo. We never share your data with third parties." %}
+    </p>
+  </div>
+</div>
+{% endblock %}

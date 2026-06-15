@@ -1,0 +1,699 @@
+{% extends "advisor/base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Admin Users" %} — FarmWise{% endblock %}
+
+{% block extra_css %}
+<style>
+  .users-layout {
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  /* ═══ Search & Filter Bar ═══ */
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+
+  .toolbar-search {
+    flex: 1;
+    min-width: 220px;
+  }
+
+  .toolbar-search input {
+    width: 100%;
+    padding: 11px 16px 11px 44px;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    color: var(--gray-800);
+    background: var(--white);
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius-full);
+    outline: none;
+    transition: all 0.25s var(--ease-out);
+  }
+
+  .toolbar-search input:focus {
+    border-color: var(--sage);
+    box-shadow: 0 0 0 4px rgba(82,183,136,0.12);
+  }
+
+  .toolbar-search input::placeholder {
+    color: var(--gray-400);
+  }
+
+  .toolbar-search-icon {
+    position: relative;
+  }
+
+  .toolbar-search-icon svg {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    color: var(--gray-400);
+    pointer-events: none;
+  }
+
+  .role-filter {
+    padding: 10px 18px;
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--gray-600);
+    background: var(--white);
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius-full);
+    outline: none;
+    cursor: pointer;
+    transition: all 0.25s var(--ease-out);
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%239CA3AF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 38px;
+  }
+
+  .role-filter:hover {
+    border-color: var(--sage-light);
+  }
+
+  .role-filter:focus {
+    border-color: var(--sage);
+    box-shadow: 0 0 0 4px rgba(82,183,136,0.12);
+  }
+
+  /* ═══ Modern Table ═══ */
+  .table-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(27,67,50,0.06);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+
+  .table-wrapper {
+    overflow-x: auto;
+  }
+
+  .users-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  .users-table thead th {
+    padding: 14px 20px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--gray-400);
+    background: var(--gray-50);
+    border-bottom: 1px solid var(--gray-200);
+    text-align: left;
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+
+  .users-table thead th:first-child {
+    padding-left: 24px;
+  }
+
+  .users-table thead th:last-child {
+    padding-right: 24px;
+    text-align: center;
+  }
+
+  .users-table tbody tr {
+    transition: background 0.2s ease;
+  }
+
+  .users-table tbody tr:hover {
+    background: var(--gray-50);
+  }
+
+  .users-table tbody td {
+    padding: 18px 20px;
+    font-size: 0.9rem;
+    color: var(--gray-700);
+    border-bottom: 1px solid var(--gray-100);
+    vertical-align: middle;
+  }
+
+  .users-table tbody td:first-child {
+    padding-left: 24px;
+  }
+
+  .users-table tbody td:last-child {
+    padding-right: 24px;
+  }
+
+  .users-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  /* ═══ User Cell ═══ */
+  .user-cell {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.82rem;
+    color: var(--white);
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .user-avatar.farmer   { background: linear-gradient(135deg, var(--forest), var(--sage)); }
+  .user-avatar.officer  { background: linear-gradient(135deg, var(--blue), #60A5FA); }
+  .user-avatar.admin    { background: linear-gradient(135deg, var(--amber), #FCD34D); color: #78350F; }
+
+  .user-avatar .online-dot {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--sage);
+    border: 2px solid var(--white);
+  }
+
+  .user-info {
+    min-width: 0;
+  }
+
+  .user-name {
+    font-weight: 600;
+    color: var(--gray-800);
+    font-size: 0.92rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .user-email {
+    font-size: 0.78rem;
+    color: var(--gray-400);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ═══ Location Cell ═══ */
+  .location-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.88rem;
+  }
+
+  .location-cell svg {
+    width: 14px;
+    height: 14px;
+    color: var(--gray-400);
+    flex-shrink: 0;
+  }
+
+  .location-cell span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .location-cell.empty {
+    color: var(--gray-300);
+    font-style: italic;
+  }
+
+  /* ═══ Role Badge ═══ */
+  .role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 14px;
+    border-radius: var(--radius-full);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+
+  .role-badge svg { width: 13px; height: 13px; }
+
+  .role-badge.farmer {
+    background: var(--pale);
+    color: var(--forest);
+  }
+
+  .role-badge.officer {
+    background: var(--blue-light);
+    color: #1E40AF;
+  }
+
+  .role-badge.admin {
+    background: var(--amber-light);
+    color: #92400E;
+  }
+
+  .role-badge.unknown {
+    background: var(--gray-100);
+    color: var(--gray-500);
+  }
+
+  /* ═══ Modern Select Dropdown ═══ */
+  .role-select-wrapper {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .role-select {
+    padding: 8px 36px 8px 14px;
+    font-family: var(--font-sans);
+    font-size: 0.84rem;
+    font-weight: 500;
+    color: var(--gray-700);
+    background: var(--white);
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    transition: all 0.25s var(--ease-out);
+    min-width: 140px;
+  }
+
+  .role-select:hover {
+    border-color: var(--sage-light);
+  }
+
+  .role-select:focus {
+    border-color: var(--sage);
+    box-shadow: 0 0 0 4px rgba(82,183,136,0.12);
+  }
+
+  .role-select-arrow {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14px;
+    height: 14px;
+    color: var(--gray-400);
+    pointer-events: none;
+    transition: color 0.2s ease;
+  }
+
+  .role-select-wrapper:hover .role-select-arrow {
+    color: var(--sage);
+  }
+
+  .role-select option {
+    padding: 8px 12px;
+    font-family: var(--font-sans);
+  }
+
+  /* ═══ Action Cell ═══ */
+  .action-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-update {
+    padding: 8px 18px;
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--white);
+    background: linear-gradient(135deg, var(--forest), var(--emerald));
+    border: none;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: all 0.3s var(--ease-out);
+    white-space: nowrap;
+    box-shadow: var(--shadow-green);
+  }
+
+  .btn-update:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-green-lg);
+  }
+
+  .btn-update:active {
+    transform: translateY(0);
+  }
+
+  /* ═══ Summary Bar ═══ */
+  .summary-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    background: var(--gray-50);
+    border-top: 1px solid var(--gray-100);
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .summary-text {
+    font-size: 0.82rem;
+    color: var(--gray-500);
+  }
+
+  .summary-text strong {
+    color: var(--gray-700);
+  }
+
+  .summary-roles {
+    display: flex;
+    gap: 16px;
+  }
+
+  .summary-role-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    color: var(--gray-500);
+  }
+
+  .summary-role-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .summary-role-dot.farmer  { background: var(--sage); }
+  .summary-role-dot.officer { background: var(--blue); }
+  .summary-role-dot.admin   { background: var(--amber); }
+
+  /* ═══ Empty State ═══ */
+  .table-empty {
+    padding: 60px 24px;
+    text-align: center;
+  }
+
+  .table-empty svg {
+    width: 64px;
+    height: 64px;
+    color: var(--gray-300);
+    margin: 0 auto 16px;
+  }
+
+  .table-empty h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--gray-700);
+    margin-bottom: 6px;
+  }
+
+  .table-empty p {
+    font-size: 0.88rem;
+    color: var(--gray-400);
+  }
+
+  /* ═══ Responsive ═══ */
+  @media (max-width: 768px) {
+    .toolbar {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .toolbar-search {
+      min-width: unset;
+    }
+
+    .users-table thead th,
+    .users-table tbody td {
+      padding: 12px 14px;
+    }
+
+    .user-avatar {
+      width: 34px;
+      height: 34px;
+      font-size: 0.72rem;
+    }
+
+    .action-cell form {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: flex-start;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="users-layout">
+
+  <!-- ═══ Page Header ═══ -->
+  <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:28px; flex-wrap:wrap; gap:16px;" class="animate-in">
+    <div>
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+        <div style="width:48px; height:48px; background:linear-gradient(135deg, var(--forest), var(--sage)); border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-green);">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <div>
+          <h1 style="font-family:var(--font-display); font-size:2rem; font-weight:800; color:var(--forest); letter-spacing:-0.02em; line-height:1.2;">
+            {% trans "Manage Users" %}
+          </h1>
+          <p style="color:var(--gray-500); font-size:0.95rem; margin-top:4px;">
+            {% trans "Assign user roles for farmers, extension officers, and administrators." %}
+          </p>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex; gap:10px; margin-top:8px;">
+      <a href="{% url 'advisor:admin_panel' %}" class="btn btn-secondary btn-sm">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        {% trans "Back to Panel" %}
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══ Toolbar: Search & Filter ═══ -->
+  <div class="toolbar animate-in animate-delay-1">
+    <div class="toolbar-search toolbar-search-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input type="text" id="userSearch" placeholder="{% trans "Search by username, email, or location..." %}" oninput="filterTable()">
+    </div>
+    <select class="role-filter" id="roleFilter" onchange="filterTable()">
+      <option value="all">{% trans "All Roles" %}</option>
+      {% for value, label in roles %}
+        <option value="{{ value }}">{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <!-- ═══ Users Table ═══ -->
+  <div class="table-card animate-in animate-delay-2">
+    <div class="table-wrapper">
+      <table class="users-table" id="usersTable">
+        <thead>
+          <tr>
+            <th>{% trans "User" %}</th>
+            <th>{% trans "Location" %}</th>
+            <th>{% trans "Current Role" %}</th>
+            <th>{% trans "Change Role" %}</th>
+            <th>{% trans "Action" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in profiles %}
+          <tr data-username="{{ p.user.username|lower }}" data-email="{{ p.user.email|lower }}" data-location="{{ p.location_label|lower }}" data-role="{{ p.role }}">
+            <!-- User Cell -->
+            <td>
+              <div class="user-cell">
+                <div class="user-avatar {% if p.role == 'admin' %}admin{% elif p.role == 'officer' %}officer{% else %}farmer{% endif %}">
+                  {{ p.user.username|make_list|first|upper }}
+                </div>
+                <div class="user-info">
+                  <div class="user-name">{{ p.user.username }}</div>
+                  <div class="user-email">{{ p.user.email|default:_("No email set") }}</div>
+                </div>
+              </div>
+            </td>
+
+            <!-- Location Cell -->
+            <td>
+              <div class="location-cell {% if not p.location_label %}empty{% endif %}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+                <span>{% if p.location_label %}{{ p.location_label }}{% else %}{% trans "Not set" %}{% endif %}</span>
+              </div>
+            </td>
+
+            <!-- Current Role Badge -->
+            <td>
+              <span class="role-badge {% if p.role == 'admin' %}admin{% elif p.role == 'officer' %}officer{% elif p.role == 'farmer' %}farmer{% else %}unknown{% endif %}">
+                {% if p.role == 'admin' %}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  {% trans "Admin" %}
+                {% elif p.role == 'officer' %}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  {% trans "Extension Officer" %}
+                {% elif p.role == 'farmer' %}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 0 0-7.5 16.5L12 22l7.5-3.5A10 10 0 0 0 12 2z"/><path d="M12 6v6l4 2"/></svg>
+                  {% trans "Farmer" %}
+                {% else %}
+                  {{ p.role|default:"Unassigned" }}
+                {% endif %}
+              </span>
+            </td>
+
+            <!-- Role Select Dropdown -->
+            <td>
+              <form method="post" style="display:inline-flex; align-items:center; gap:8px;">
+                {% csrf_token %}
+                <input type="hidden" name="profile_id" value="{{ p.id }}">
+                <div class="role-select-wrapper">
+                  <select name="role" class="role-select">
+                    {% for value, label in roles %}
+                      <option value="{{ value }}" {% if p.role == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                  </select>
+                  <svg class="role-select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"/>
+                  </svg>
+                </div>
+              </form>
+            </td>
+
+            <!-- Update Button -->
+            <td>
+              <div class="action-cell">
+                <form method="post" style="display:inline-flex; align-items:center; gap:8px;">
+                  {% csrf_token %}
+                  <input type="hidden" name="profile_id" value="{{ p.id }}">
+                  <select name="role" style="display:none;" class="hidden-role-select">
+                    {% for value, label in roles %}
+                      <option value="{{ value }}" {% if p.role == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                  </select>
+                  <button type="submit" class="btn-update">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px; margin-right:3px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    {% trans "Update" %}
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5">
+              <div class="table-empty">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                <h3>{% trans "No users found" %}</h3>
+                <p>{% trans "No registered profiles match your current filters." %}</p>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Summary Footer -->
+    {% if profiles %}
+    <div class="summary-bar">
+      <div class="summary-text">
+        {% blocktrans count count=profiles|length %}Showing <strong>{{ count }}</strong> user{% plural %}Showing <strong>{{ count }}</strong> users{% endblocktrans %}
+      </div>
+      <div class="summary-roles">
+        <div class="summary-role-item">
+          <span class="summary-role-dot farmer"></span>
+          {% trans "Farmers" %}
+        </div>
+        <div class="summary-role-item">
+          <span class="summary-role-dot officer"></span>
+          {% trans "Officers" %}
+        </div>
+        <div class="summary-role-item">
+          <span class="summary-role-dot admin"></span>
+          {% trans "Admins" %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function() {
+  // Sync the visible dropdown with the hidden one in the update form
+  document.querySelectorAll('.role-select').forEach(function(visibleSelect) {
+    visibleSelect.addEventListener('change', function() {
+      const row = this.closest('tr');
+      const hiddenSelect = row.querySelector('.hidden-role-select');
+      if (hiddenSelect) {
+        hiddenSelect.value = this.value;
+      }
+    });
+  });
+
+  // Search & filter functionality
+  window.filterTable = function() {
+    const searchVal = document.getElementById('userSearch').value.toLowerCase();
+    const roleVal = document.getElementById('roleFilter').value;
+    const rows = document.querySelectorAll('#usersTable tbody tr[data-username]');
+
+    rows.forEach(function(row) {
+      const username = row.dataset.username || '';
+      const email = row.dataset.email || '';
+      const location = row.dataset.location || '';
+      const role = row.dataset.role || '';
+
+      const matchesSearch = !searchVal ||
+        username.includes(searchVal) ||
+        email.includes(searchVal) ||
+        location.includes(searchVal);
+
+      const matchesRole = roleVal === 'all' || role === roleVal;
+
+      row.style.display = (matchesSearch && matchesRole) ? '' : 'none';
+    });
+  };
+})();
+</script>
+{% endblock %}

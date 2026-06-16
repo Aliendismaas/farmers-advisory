@@ -33,6 +33,11 @@ ALLOWED_HOSTS = [
 if DEBUG and not ALLOWED_HOSTS:
     ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
+# Automatically trust Render hostname in production
+render_host = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
+if render_host:
+    ALLOWED_HOSTS.append(render_host)
+
 # Allow all ngrok tunnels in development
 if DEBUG:
     ALLOWED_HOSTS += [".ngrok-free.app", ".ngrok.io"]

@@ -168,6 +168,6 @@ SMS_SENDER_ID = os.environ.get("SMS_SENDER_ID", "EasyTextAPI")
 # Sewmr SMS (api.sewmrsms.co.tz) — Bearer token REST API
 SEWMR_API_KEY = os.environ.get(
     "SEWMR_API_KEY",
-    "Qw4fXeHenstf6sG_bp3DYoE736XoJdlm8i6uJ-m2e2xIvQtPPY739w",
+    "wn8IU9dWjT3EyplUIXZcOUg_2QUOOLD6wWmiSDX38HCSe_yt2M_oWA",
 )
 SEWMR_BASE_URL = os.environ.get("SEWMR_BASE_URL", "https://api.sewmrsms.co.tz/api/v1")

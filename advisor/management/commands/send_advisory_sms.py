@@ -27,20 +27,49 @@ _NOTABLE_PLANTING = {"In season", "Marginal"}
 _WEATHER_KEYWORDS = ("frost risk", "heavy rain", "hot day", "heat stress")
 
 
-def _is_notable(advisory, adv_pref: str) -> bool:
-    notes_lower = (advisory.weather_notes or "").lower()
-    weather_hit = any(kw in notes_lower for kw in _WEATHER_KEYWORDS)
+CROP_TRANSLATIONS = {
+    "en": {
+        "cassava": "cassava",
+        "common beans": "common beans",
+        "cotton": "cotton",
+        "dry beans": "dry beans",
+        "groundnuts (peanuts)": "groundnuts",
+        "irish potatoes": "Irish potatoes",
+        "maize (vuli season)": "maize (Vuli season)",
+        "maize (grain)": "maize",
+        "onions": "onions",
+        "paddy rice": "paddy rice",
+        "potatoes": "potatoes",
+        "sesame (simsim)": "sesame",
+        "sorghum": "sorghum",
+        "sunflower": "sunflower",
+        "sweet potatoes": "sweet potatoes",
+        "tomatoes": "tomatoes",
+    },
+    "sw": {
+        "cassava": "muhogo",
+        "common beans": "maharage ya kawaida",
+        "cotton": "pamba",
+        "dry beans": "maharage makavu",
+        "groundnuts (peanuts)": "karanga",
+        "irish potatoes": "viazi mviringo",
+        "maize (vuli season)": "mahindi (msimu wa vuli)",
+        "maize (grain)": "mahindi",
+        "onions": "vitunguu",
+        "paddy rice": "mpunga",
+        "potatoes": "viazi",
+        "sesame (simsim)": "ufuta",
+        "sorghum": "mtama",
+        "sunflower": "alizeti",
+        "sweet potatoes": "viazi vitamu",
+        "tomatoes": "nyanya",
+    }
+}
 
-    if adv_pref == "planting":
-        return advisory.planting_status in _NOTABLE_PLANTING or weather_hit
-    if adv_pref == "harvest":
-        return advisory.harvest_status == "Harvest window" or weather_hit
-    # "both" or unset
-    if advisory.planting_status in _NOTABLE_PLANTING:
-        return True
-    if advisory.harvest_status == "Harvest window":
-        return True
-    return weather_hit
+
+def _is_notable(advisory, adv_pref: str) -> bool:
+    # Always process all crops to ensure out-of-season crop alerts are sent
+    return True
 
 
 def _already_sent_today(profile, crop) -> bool:
@@ -54,22 +83,57 @@ def _already_sent_today(profile, crop) -> bool:
     ).exists()
 
 
-def _build_sms_text(advisory, crop_name: str, adv_pref: str) -> str:
-    recommendation_parts = []
+def _build_sms_text(advisory, crop_name: str, adv_pref: str, lang: str) -> str:
+    in_plant = advisory.planting_status in ("In season", "Marginal")
+    in_harvest = advisory.harvest_status == "Harvest window"
+    
+    # Perform a case-insensitive lookup
+    lookup_key = crop_name.strip().lower()
+    crop_name_lower = CROP_TRANSLATIONS.get(lang, CROP_TRANSLATIONS["en"]).get(lookup_key, crop_name.lower())
 
-    if adv_pref != "harvest" and advisory.planting_status in _NOTABLE_PLANTING:
-        recommendation_parts.append(advisory.planting_detail)
+    if lang == "sw":
+        if adv_pref == "planting":
+            if in_plant:
+                msg = f"Ushauri: Huu ni msimu unaofaa wa kupanda {crop_name_lower} katika eneo lako. Kutokana na uwezekano wa mvua za kutosha katika siku zijazo, andaa shamba na anza upandaji kwa kutumia mbegu bora zinazopendekezwa."
+            else:
+                msg = f"Tahadhari: Kwa mujibu wa kalenda ya kilimo na hali ya hewa ya sasa, huu si msimu unaofaa wa kupanda {crop_name_lower} katika eneo lako. Inashauriwa kusubiri msimu rasmi wa upandaji kabla ya kuanza shughuli za kupanda ili kuepuka hasara za uzalishaji."
+        elif adv_pref == "harvest":
+            if in_harvest:
+                msg = f"Ushauri: Huu ni msimu unaofaa wa kuvuna {crop_name_lower} katika eneo lako. Andaa shughuli za uvunaji na uhifadhi bora wa mazao ili kuepuka hasara baada ya mavuno."
+            else:
+                msg = f"Tahadhari: Kwa sasa zao la {crop_name_lower} halipo katika kipindi cha kuvuna kwa mujibu wa msimu wa kilimo wa eneo hili. Endelea kufuatilia maendeleo ya zao na ushauri wa kilimo mpaka kipindi cha mavuno kitakapofika."
+        else:  # "both"
+            if in_plant:
+                msg = f"Ushauri: Huu ni msimu unaofaa wa kupanda {crop_name_lower} katika eneo lako. Kutokana na uwezekano wa mvua za kutosha katika siku zijazo, andaa shamba na anza upandaji kwa kutumia mbegu bora zinazopendekezwa."
+            elif in_harvest:
+                msg = f"Ushauri: Huu ni msimu unaofaa wa kuvuna {crop_name_lower} katika eneo lako. Andaa shughuli za uvunaji na uhifadhi bora wa mazao ili kuepuka hasara baada ya mavuno."
+            else:
+                msg = f"Hakuna ushauri wa kilimo unaoweza kutolewa kwa zao la {crop_name_lower} kwa sasa kwa sababu halipo ndani ya msimu wa kupanda wala kuvuna katika eneo hili. Tafadhali subiri msimu husika au chagua zao lingine linalostahimili hali ya sasa."
+    else:  # "en" or other
+        if adv_pref == "planting":
+            if in_plant:
+                msg = f"Advice: This is the suitable season for planting {crop_name_lower} in your area. Due to the likelihood of sufficient rain in the coming days, prepare the field and start planting using recommended quality seeds."
+            else:
+                msg = f"Warning: According to the agricultural calendar and current weather, this is not the suitable season for planting {crop_name_lower} in your area. It is advised to wait for the official planting season before starting planting activities to avoid production losses."
+        elif adv_pref == "harvest":
+            if in_harvest:
+                msg = f"Advice: This is the suitable season for harvesting {crop_name_lower} in your area. Prepare harvesting and post-harvest storage activities to avoid post-harvest losses."
+            else:
+                msg = f"Warning: Currently, the {crop_name_lower} crop is not in the harvesting period according to the agricultural season of this area. Continue monitoring the crop development and agricultural advice until the harvest period arrives."
+        else:  # "both"
+            if in_plant:
+                msg = f"Advice: This is the suitable season for planting {crop_name_lower} in your area. Due to the likelihood of sufficient rain in the coming days, prepare the field and start planting using recommended quality seeds."
+            elif in_harvest:
+                msg = f"Advice: This is the suitable season for harvesting {crop_name_lower} in your area. Prepare harvesting and post-harvest storage activities to avoid post-harvest losses."
+            else:
+                msg = f"No agricultural advice can be provided for {crop_name_lower} at this time because it is not within the planting or harvesting season in this area. Please wait for the relevant season or choose another crop that tolerates the current conditions."
 
-    if adv_pref != "planting" and advisory.harvest_status == "Harvest window":
-        recommendation_parts.append(advisory.harvest_detail)
-
+    # Append weather warning notes if present and not the default "no flags" note
     notes = (advisory.weather_notes or "").strip()
     if notes and "No major weather red flags" not in notes:
-        recommendation_parts.append(notes)
+        msg += " " + notes
 
-    recommendation = " ".join(recommendation_parts) or advisory.planting_detail or advisory.harvest_detail or ""
-
-    return f"{_('Crop')}: {crop_name}\n{_('Recommendation')}: {recommendation}"[:459]
+    return msg[:459]
 
 
 class Command(BaseCommand):
@@ -179,7 +243,7 @@ class Command(BaseCommand):
                 else:
                     sms_advisory = advisory
 
-                message = _build_sms_text(sms_advisory, crop.name, adv_pref)
+                message = _build_sms_text(sms_advisory, crop.name, adv_pref, lang)
                 activate("en")
                 notif = send_sms_notification(
                     profile=profile,
